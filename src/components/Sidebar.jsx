@@ -43,7 +43,7 @@ export default function Sidebar({
     });
   }
 
-  // Horarios is visible for everyone (admin, common, public)
+  // Horarios is visible for everyone
   menuItems.push({
     id: "schedules",
     label: "Horarios",
@@ -51,7 +51,7 @@ export default function Sidebar({
     roleRequired: ["admin", "comun", "public"]
   });
 
-  // Novedades is visible for admin and common (and let's show it for public too if we want, but prompt says " cartelera digital... informar a los usuarios del sistema y servir como cartelera institucional digital". Let's show it for logged-in users and optionally public. Let's make it visible to admin/comun.
+  // Novedades is visible for admin and common
   if (role === "admin" || role === "comun") {
     menuItems.push({
       id: "news",
@@ -82,7 +82,7 @@ export default function Sidebar({
             left: 0,
             width: "100vw",
             height: "100vh",
-            background: "rgba(0,0,0,0.6)",
+            background: "rgba(45, 37, 30, 0.5)",
             backdropFilter: "blur(4px)",
             zIndex: 90,
           }}
@@ -92,22 +92,8 @@ export default function Sidebar({
       {/* Sidebar Navigation Panel */}
       <aside 
         style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          height: "100vh",
-          width: "var(--sidebar-width)",
-          background: "var(--bg-secondary)",
-          borderRight: "1px solid var(--border-glass)",
-          zIndex: 100,
-          display: "flex",
-          flexDirection: "column",
-          padding: "2rem 1.5rem",
           transform: isOpen ? "translateX(0)" : "translateX(-100%)",
-          transition: "transform var(--transition-normal)",
-          boxShadow: isOpen ? "10px 0 30px rgba(0,0,0,0.5)" : "none"
         }}
-        // Apply responsive desktop style override
         className="sidebar-panel"
       >
         {/* Responsive Desktop Style Hack via tag */}
@@ -123,20 +109,12 @@ export default function Sidebar({
         {/* Header / Brand */}
         <div className="flex-between" style={{ marginBottom: "2.5rem" }}>
           <div>
-            <h2 
-              style={{ 
-                fontFamily: "var(--font-family-title)",
-                fontSize: "1.5rem", 
-                fontWeight: 700, 
-                color: "#fff",
-                background: "linear-gradient(135deg, #fff 40%, var(--text-muted) 100%)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent"
-              }}
-            >
+            <h2 style={{ fontSize: "1.5rem", fontWeight: 800 }}>
               SisGest
             </h2>
-            <p style={{ color: "var(--text-muted)", fontSize: "0.75rem" }}>CEIJA Alberdi</p>
+            <p style={{ color: "rgba(255, 255, 255, 0.6)", fontSize: "0.75rem", fontWeight: 500 }}>
+              CEIJA Alberdi
+            </p>
           </div>
           {/* Close button on Mobile */}
           <button 
@@ -144,7 +122,7 @@ export default function Sidebar({
             style={{
               background: "none",
               border: "none",
-              color: "var(--text-muted)",
+              color: "rgba(255, 255, 255, 0.6)",
               cursor: "pointer",
               display: "none"
             }}
@@ -171,38 +149,9 @@ export default function Sidebar({
                   setCurrentModule(item.id);
                   onClose();
                 }}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "0.85rem",
-                  width: "100%",
-                  padding: "0.85rem 1rem",
-                  borderRadius: "var(--radius-sm)",
-                  border: "1px solid transparent",
-                  background: isActive ? "rgba(99, 102, 241, 0.15)" : "transparent",
-                  borderColor: isActive ? "rgba(99, 102, 241, 0.25)" : "transparent",
-                  color: isActive ? "#fff" : "var(--text-muted)",
-                  fontFamily: "var(--font-family-sans)",
-                  fontSize: "0.95rem",
-                  fontWeight: isActive ? 600 : 500,
-                  textAlign: "left",
-                  cursor: "pointer",
-                  transition: "all var(--transition-fast)"
-                }}
-                onMouseEnter={(e) => {
-                  if (!isActive) {
-                    e.currentTarget.style.color = "#fff";
-                    e.currentTarget.style.background = "rgba(255, 255, 255, 0.03)";
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (!isActive) {
-                    e.currentTarget.style.color = "var(--text-muted)";
-                    e.currentTarget.style.background = "transparent";
-                  }
-                }}
+                className={`sidebar-btn ${isActive ? "active" : ""}`}
               >
-                <Icon size={18} style={{ color: isActive ? "var(--primary)" : "inherit" }} />
+                <Icon size={18} style={{ color: isActive ? "var(--color-ocre)" : "inherit" }} />
                 <span>{item.label}</span>
               </button>
             );
@@ -210,23 +159,14 @@ export default function Sidebar({
         </nav>
 
         {/* Footer Area with user profile / logout */}
-        <div 
-          style={{ 
-            borderTop: "1px solid var(--border-glass)", 
-            paddingTop: "1.5rem",
-            display: "flex",
-            flexDirection: "column",
-            gap: "1rem"
-          }}
-        >
+        <div className="sidebar-footer">
           <div style={{ display: "flex", flexDirection: "column" }}>
-            <span style={{ fontSize: "0.75rem", color: "var(--text-inactive)", textTransform: "uppercase", fontWeight: 600 }}>
+            <span style={{ fontSize: "0.75rem", color: "rgba(255, 255, 255, 0.5)", textTransform: "uppercase", fontWeight: 600 }}>
               Sesión Iniciada
             </span>
             <span 
               style={{ 
                 fontSize: "0.9rem", 
-                color: "#fff", 
                 fontWeight: 500,
                 textOverflow: "ellipsis",
                 overflow: "hidden",
@@ -245,7 +185,7 @@ export default function Sidebar({
             <div 
               style={{
                 fontSize: "0.7rem",
-                color: "var(--color-warning)",
+                color: "var(--color-ocre)",
                 display: "flex",
                 alignItems: "center",
                 gap: "0.35rem"
@@ -258,6 +198,7 @@ export default function Sidebar({
 
           <button 
             onClick={onLogout}
+            className="sidebar-logout-btn"
             style={{
               display: "flex",
               alignItems: "center",
@@ -266,20 +207,10 @@ export default function Sidebar({
               padding: "0.85rem 1rem",
               borderRadius: "var(--radius-sm)",
               border: "1px solid transparent",
-              background: "rgba(239, 68, 68, 0.08)",
-              borderColor: "rgba(239, 68, 68, 0.15)",
-              color: "var(--color-error)",
+              cursor: "pointer",
               fontFamily: "var(--font-family-sans)",
               fontSize: "0.95rem",
               fontWeight: 500,
-              cursor: "pointer",
-              transition: "all var(--transition-fast)"
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = "rgba(239, 68, 68, 0.15)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = "rgba(239, 68, 68, 0.08)";
             }}
           >
             <LogOut size={18} />

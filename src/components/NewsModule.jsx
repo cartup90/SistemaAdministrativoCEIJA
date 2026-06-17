@@ -195,6 +195,18 @@ export default function NewsModule({ user }) {
 
               {/* Title & Metadata */}
               <div style={{ paddingRight: item.destacado ? "6rem" : "0" }}>
+                <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", marginBottom: "0.5rem" }}>
+                  <span className="flower-category-tag">
+                    <span className="flower-icon-dot" />
+                    <span>
+                      {item.titulo.toLowerCase().includes("clase") || item.titulo.toLowerCase().includes("desinfección") || item.titulo.toLowerCase().includes("suspensión") ? "Académico" :
+                       item.titulo.toLowerCase().includes("taller") || item.titulo.toLowerCase().includes("inscrip") ? "Taller" :
+                       item.titulo.toLowerCase().includes("acto") || item.titulo.toLowerCase().includes("patria") ? "Acto Escolar" :
+                       item.titulo.toLowerCase().includes("maternal") || item.titulo.toLowerCase().includes("sala") ? "Espacio Maternal" :
+                       "Institucional"}
+                    </span>
+                  </span>
+                </div>
                 <h2 style={{ fontSize: "1.5rem", color: "#fff", fontWeight: 700, marginBottom: "0.35rem" }}>
                   {item.titulo}
                 </h2>

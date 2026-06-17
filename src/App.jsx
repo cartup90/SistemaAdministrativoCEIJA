@@ -1,6 +1,6 @@
 // src/App.jsx
 import React, { useState, useEffect } from "react";
-import { Menu, LogOut, Newspaper, Calendar, Search, FileText, X, LogIn, AlertTriangle, CheckCircle2 } from "lucide-react";
+import { Menu, LogOut, Newspaper, Calendar, Search, FileText, X, LogIn, AlertTriangle, CheckCircle2, BookOpen, Sparkles, Trophy, Cpu, ChevronRight } from "lucide-react";
 import { onAuthChange, logout, getStudentPublicInfo } from "./firebase";
 import Auth from "./components/Auth";
 import Sidebar from "./components/Sidebar";
@@ -9,6 +9,13 @@ import TeacherModule from "./components/TeacherModule";
 import ScheduleModule from "./components/ScheduleModule";
 import NewsModule from "./components/NewsModule";
 import ConfigModule from "./components/ConfigModule";
+
+// Import school photographs
+import entranceImg from "./assets/Fotos escuela/IMG_20250219_190308.jpg";
+import gymImg from "./assets/Fotos escuela/IMG_20260430_210828.jpg";
+import patioImg from "./assets/Fotos escuela/IMG_20260326_220211.jpg";
+import corridorImg from "./assets/Fotos escuela/IMG_20251219_194717.jpg";
+import muralImg from "./assets/Fotos escuela/IMG_20260430_194238.jpg";
 
 export default function App() {
   const [user, setUser] = useState(null);
@@ -23,6 +30,8 @@ export default function App() {
   const [publicStudentInfo, setPublicStudentInfo] = useState(null);
   const [publicSearchError, setPublicSearchError] = useState("");
   const [publicSearchLoading, setPublicSearchLoading] = useState(false);
+  const [lightboxImg, setLightboxImg] = useState(null);
+  const [lightboxTitle, setLightboxTitle] = useState("");
 
   // Subscribe to Authentication State changes
   useEffect(() => {
@@ -139,10 +148,10 @@ export default function App() {
           }}
         >
           <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-            <h1 style={{ fontFamily: "var(--font-family-title)", fontSize: "1.3rem", fontWeight: 800, color: "#fff" }}>
+            <h1 style={{ fontFamily: "var(--font-family-title)", fontSize: "1.3rem", fontWeight: 800, color: "var(--text-main)" }}>
               SisGest
             </h1>
-            <span style={{ fontSize: "0.75rem", color: "var(--text-muted)", background: "rgba(255,255,255,0.05)", padding: "0.2rem 0.5rem", borderRadius: "var(--radius-sm)" }}>
+            <span style={{ fontSize: "0.75rem", color: "var(--text-muted)", background: "rgba(139, 38, 53, 0.05)", padding: "0.2rem 0.5rem", borderRadius: "var(--radius-sm)", fontWeight: 600 }}>
               CEIJA N° 12 Alberdi
             </span>
           </div>
@@ -167,13 +176,110 @@ export default function App() {
             <button
               onClick={() => setShowLogin(true)}
               className="btn btn-secondary"
-              style={{ padding: "0.5rem 1rem", fontSize: "0.85rem", marginLeft: "0.5rem", border: "1px solid var(--primary)", color: "#fff" }}
+              style={{ padding: "0.5rem 1rem", fontSize: "0.85rem", marginLeft: "0.5rem", border: "1px solid var(--primary)", color: "var(--primary)" }}
             >
               <LogIn size={16} />
               <span style={{ marginLeft: "0.25rem" }}>Acceso Personal</span>
             </button>
           </div>
         </header>
+
+        {/* Guirnalda "Florecerán Pañuelos" under Header */}
+        {activePublicTab === "news" && (
+          <div className="garland-line">
+            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((idx) => (
+              <div key={idx} className="garland-element">
+                <span className="flower-bead" style={{ backgroundColor: idx % 3 === 0 ? "#E65A4B" : idx % 3 === 1 ? "#F4B41A" : "#48A9A6" }} />
+                <div className="panuelo-white" title="Florecerán Pañuelos" />
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Hero Section (Fachada Exterior / Letrero Eva Duarte / Asimétrico) */}
+        {activePublicTab === "news" && (
+          <section 
+            className="textured-muros"
+            style={{
+              padding: "3rem max(1rem, 5%) 4rem",
+              borderBottom: "1px solid var(--border-glass)",
+              position: "relative"
+            }}
+          >
+            <div className="hero-layout">
+              <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem", alignItems: "flex-start", zIndex: 10 }}>
+                <div className="stencil-title-container">
+                  <span className="stencil-text">Escuela María Eva Duarte</span>
+                </div>
+                <h2 
+                  style={{ 
+                    fontFamily: "var(--font-family-title)", 
+                    fontSize: "clamp(2rem, 3.8vw, 3rem)", 
+                    fontWeight: 800, 
+                    color: "var(--text-main)", 
+                    lineHeight: 1.1 
+                  }}
+                >
+                  CEIJA N° 12
+                  <span style={{ display: "block", fontSize: "0.65em", fontWeight: 600, color: "var(--color-ladrillo)", marginTop: "0.25rem" }}>
+                    "Remedios Escalada de San Martín"
+                  </span>
+                </h2>
+                <p style={{ color: "var(--text-muted)", fontSize: "1.05rem", fontWeight: 500, maxWidth: "600px", lineHeight: 1.6 }}>
+                  Centro Educativo de Nivel Secundario para Jóvenes y Adultos. Anexo Alberdi. Un espacio de aprendizaje colectivo, memoria y futuro construido en comunidad.
+                </p>
+                <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
+                  <button onClick={() => {
+                    const el = document.getElementById("public-navigation");
+                    if (el) el.scrollIntoView({ behavior: "smooth" });
+                  }} className="btn btn-primary">
+                    <span>Ver Novedades</span>
+                    <ChevronRight size={16} />
+                  </button>
+                  <button onClick={() => {
+                    setActivePublicTab("schedules");
+                    setTimeout(() => {
+                      const el = document.getElementById("public-navigation");
+                      if (el) el.scrollIntoView({ behavior: "smooth" });
+                    }, 100);
+                  }} className="btn btn-secondary" style={{ borderColor: "var(--color-ladrillo)", color: "var(--color-ladrillo)", fontWeight: 700 }}>
+                    <span>Consultar Horarios</span>
+                  </button>
+                </div>
+              </div>
+              
+              <div className="asymmetric-block-container" style={{ transform: "rotate(1deg)", border: "4px solid var(--color-ladrillo)", maxWidth: "460px", justifySelf: "center" }}>
+                <img 
+                  src={entranceImg} 
+                  alt="Entrada CEIJA N°12" 
+                  style={{ width: "100%", height: "auto", display: "block", objectFit: "cover" }}
+                />
+                <div style={{ position: "absolute", bottom: 0, left: 0, width: "100%", padding: "0.75rem", background: "rgba(139, 38, 53, 0.9)", color: "#fff", fontSize: "0.75rem", fontWeight: 600, textAlign: "center" }}>
+                  Fachada de la Institución — Anexo Alberdi
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* Wave Divider inspired by the Latin America Mural */}
+        {activePublicTab === "news" && (
+          <div className="wave-divider">
+            <svg viewBox="0 0 1440 120" preserveAspectRatio="none">
+              <path d="M0,32 C240,70 480,95 720,80 C960,65 1200,20 1440,5 L1440,120 L0,120 Z" className="mural-fill" />
+              <path d="M0,28 C240,68 480,90 720,78 C960,60 1200,18 1440,3" stroke="var(--color-ocre)" strokeWidth="4" fill="none" />
+              <path d="M0,20 C240,50 480,80 720,60 C960,40 1200,10 1440,0" stroke="var(--color-ladrillo)" strokeWidth="2" fill="none" />
+              
+              {/* Colorful map locks inspired by Mural hair */}
+              <path d="M100,55 C120,65 140,50 160,70" stroke="#E65A4B" strokeWidth="6" strokeLinecap="round" fill="none" />
+              <path d="M140,65 C160,75 180,60 200,80" stroke="#F4B41A" strokeWidth="6" strokeLinecap="round" fill="none" />
+              <path d="M180,75 C200,85 220,70 240,90" stroke="#48A9A6" strokeWidth="6" strokeLinecap="round" fill="none" />
+              <path d="M220,85 C240,95 260,80 280,100" stroke="#8B2635" strokeWidth="6" strokeLinecap="round" fill="none" />
+            </svg>
+          </div>
+        )}
+
+        <div id="public-navigation" style={{ height: "1px" }} />
 
         {/* Public Main Body */}
         <div 
@@ -231,13 +337,24 @@ export default function App() {
 
           {/* Right Sidebar Column - DNI Consulta */}
           <div className="public-sidebar">
-            <div className="glass-card animate-fade-in" style={{ padding: "1.5rem", display: "flex", flexDirection: "column", gap: "1rem", position: "sticky", top: "6rem" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", borderBottom: "1px solid rgba(255,255,255,0.05)", paddingBottom: "0.5rem" }}>
-                <FileText size={20} style={{ color: "var(--primary)" }} />
-                <h3 style={{ color: "#fff", fontSize: "1.1rem", fontWeight: 700 }}>Consulta de Legajo</h3>
+            <div 
+              className="glass-card animate-fade-in" 
+              style={{ 
+                padding: "1.5rem", 
+                display: "flex", 
+                flexDirection: "column", 
+                gap: "1rem", 
+                position: "sticky", 
+                top: "6rem",
+                borderTop: "4px solid var(--color-ladrillo) !important" 
+              }}
+            >
+              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", borderBottom: "1px solid rgba(139,38,53,0.08)", paddingBottom: "0.5rem" }}>
+                <FileText size={20} style={{ color: "var(--color-ladrillo)" }} />
+                <h3 style={{ color: "var(--text-main)", fontSize: "1.1rem", fontWeight: 700 }}>Consulta de Legajo</h3>
               </div>
-              <p style={{ color: "var(--text-muted)", fontSize: "0.8rem", lineHeight: 1.4 }}>
-                Consulta el estado de tu documentación obligatoria, legajo físico y materias previas ingresando tu DNI.
+              <p style={{ color: "var(--text-muted)", fontSize: "0.8rem", lineHeight: 1.5 }}>
+                Verificá de manera segura tu checklist de documentación física y tus previas ingresando tu DNI.
               </p>
 
               <form 
@@ -259,7 +376,7 @@ export default function App() {
                         setPublicSearchError("");
                       }}
                       disabled={publicSearchLoading}
-                      style={{ paddingLeft: "2.2rem" }}
+                      style={{ paddingLeft: "2.2rem", borderColor: "var(--border-glass)" }}
                     />
                     <Search size={14} style={{ position: "absolute", left: "0.8rem", top: "50%", transform: "translateY(-50%)", color: "var(--text-inactive)" }} />
                   </div>
@@ -285,19 +402,154 @@ export default function App() {
           </div>
         </div>
 
+        {/* Campus / Virtual Classroom Section (Robot CEIJA) */}
+        {activePublicTab === "news" && (
+          <section 
+            className="glass-card animate-fade-in"
+            style={{
+              margin: "1rem max(1rem, 5%) 2.5rem",
+              padding: "2.25rem 2rem",
+              background: "rgba(244, 180, 26, 0.04)",
+              border: "1px solid var(--border-glass)",
+              display: "flex",
+              flexWrap: "wrap",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: "2rem"
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: "1.75rem", flexWrap: "wrap" }}>
+              <div style={{ flexShrink: 0 }}>
+                {/* SVG Drawing of the robot "CEIJA" on the window */}
+                <svg className="robot-float" width="90" height="90" viewBox="0 0 100 100">
+                  <rect x="25" y="20" width="50" height="40" rx="10" fill="var(--color-ladrillo)" stroke="var(--color-ocre)" strokeWidth="3" />
+                  <rect x="32" y="26" width="36" height="24" rx="5" fill="#FFF" />
+                  <circle cx="43" cy="35" r="3.5" fill="var(--color-ladrillo)" />
+                  <circle cx="57" cy="35" r="3.5" fill="var(--color-ladrillo)" />
+                  <path d="M 45 43 Q 50 46 55 43" stroke="var(--color-ladrillo)" strokeWidth="2.5" fill="none" strokeLinecap="round" />
+                  <line x1="50" y1="20" x2="50" y2="8" stroke="var(--color-ocre)" strokeWidth="3" />
+                  <circle cx="50" cy="8" r="4" fill="var(--color-ladrillo)" />
+                  <rect x="33" y="65" width="34" height="28" rx="6" fill="var(--color-ocre)" stroke="var(--color-ladrillo)" strokeWidth="2.5" />
+                  <rect x="44" y="60" width="12" height="6" fill="var(--text-muted)" />
+                  <text x="50" y="82" fontSize="9" fontWeight="bold" fill="var(--color-ladrillo)" textAnchor="middle">CEIJA</text>
+                </svg>
+              </div>
+              
+              <div>
+                <h3 style={{ fontSize: "1.4rem", color: "var(--color-ladrillo)", marginBottom: "0.5rem", fontWeight: 800 }}>
+                  Aulas Virtuales e Innovación
+                </h3>
+                <p style={{ color: "var(--text-muted)", fontSize: "0.9rem", maxWidth: "600px", lineHeight: 1.5 }}>
+                  Accedé al campus digital del CEIJA Alberdi. Espacio de formación tecnológica, talleres y soporte pedagógico para todos los estudiantes y profesores del anexo.
+                </p>
+              </div>
+            </div>
+            
+            <button className="btn btn-primary" onClick={() => window.open("#", "_blank")}>
+              <Cpu size={16} />
+              <span>Ingresar a Campus</span>
+            </button>
+          </section>
+        )}
+
+        {/* Dynamic Spaces Gallery (Gym, Acts Patio, Corridor, Mural) */}
+        {activePublicTab === "news" && (
+          <section style={{ padding: "0.5rem max(1rem, 5%) 3.5rem" }}>
+            <h3 style={{ fontSize: "1.5rem", marginBottom: "1.5rem", borderBottom: "2px solid var(--color-ocre)", paddingBottom: "0.4rem", display: "inline-block", fontWeight: 800 }}>
+              Nuestros Espacios y Actividades
+            </h3>
+            
+            <div className="grid-cols-3">
+              <div 
+                className="gallery-card" 
+                onClick={() => { setLightboxImg(patioImg); setLightboxTitle("Patio Principal - Acto Institucional"); }}
+              >
+                <img src={patioImg} alt="Acto escolar patio" className="gallery-image" />
+                <div className="gallery-overlay">
+                  <h4>Patio Principal</h4>
+                  <p>Lugar de encuentro durante los actos escolares y festejos comunitarios.</p>
+                </div>
+              </div>
+              
+              <div 
+                className="gallery-card" 
+                onClick={() => { setLightboxImg(gymImg); setLightboxTitle("Gimnasio y Salón Cubierto"); }}
+              >
+                <img src={gymImg} alt="Gimnasio con aro de basket" className="gallery-image" />
+                <div className="gallery-overlay">
+                  <h4>Gimnasio Escolar</h4>
+                  <p>Espacio deportivo con aros de básquet y zócalos color ladrillo.</p>
+                </div>
+              </div>
+              
+              <div 
+                className="gallery-card" 
+                onClick={() => { setLightboxImg(corridorImg); setLightboxTitle("Galería y Puertas de Aulas"); }}
+              >
+                <img src={corridorImg} alt="Corredor y aulas" className="gallery-image" />
+                <div className="gallery-overlay">
+                  <h4>Galería y Aulas</h4>
+                  <p>Corredores con pisos de granito y puertas de madera restauradas.</p>
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* Footer with Pañuelos decoration */}
+        <footer 
+          style={{
+            background: "var(--bg-secondary)",
+            borderTop: "1px solid var(--border-glass)",
+            marginTop: "auto"
+          }}
+        >
+          <div className="garland-line" style={{ transform: "rotate(180deg)", opacity: 0.7 }}>
+            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((idx) => (
+              <div key={idx} className="garland-element">
+                <span className="flower-bead" style={{ backgroundColor: idx % 2 === 0 ? "#E65A4B" : "#F4B41A" }} />
+                <div className="panuelo-white" />
+              </div>
+            ))}
+          </div>
+          <div style={{ padding: "2rem max(1rem, 5%)", textAlign: "center", fontSize: "0.85rem", color: "var(--text-muted)" }}>
+            <p style={{ fontWeight: 700, color: "var(--text-main)" }}>CEIJA N° 12 "Remedios Escalada de San Martín" — Anexo Alberdi</p>
+            <p style={{ fontSize: "0.75rem", marginTop: "0.35rem" }}>© 2026 Sistema de Gestión Administrativa SisGest. Diseñado con identidad comunitaria local.</p>
+          </div>
+        </footer>
+
+        {/* Lightbox Modal for Gallery */}
+        {lightboxImg && (
+          <div className="lightbox-backdrop" onClick={() => setLightboxImg(null)}>
+            <div className="lightbox-content" onClick={(e) => e.stopPropagation()}>
+              <img src={lightboxImg} alt={lightboxTitle} className="lightbox-img" />
+              <h4 style={{ color: "#fff", marginTop: "1rem", fontSize: "1.15rem", fontWeight: 700, textAlign: "center" }}>
+                {lightboxTitle}
+              </h4>
+              <button 
+                onClick={() => setLightboxImg(null)} 
+                className="btn btn-secondary" 
+                style={{ marginTop: "1rem", color: "#fff", borderColor: "#fff", background: "rgba(255,255,255,0.08)" }}
+              >
+                Cerrar Imagen
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Modal for Public Legajo Detail */}
         {publicStudentInfo && (
           <div style={publicModalBackdropStyle}>
             <div className="glass-card animate-fade-in" style={publicModalContentStyle(650)}>
               <div className="flex-between" style={{ borderBottom: "1px solid var(--border-glass)", paddingBottom: "1rem", marginBottom: "1.5rem" }}>
                 <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-                  <FileText size={24} style={{ color: "var(--primary)" }} />
+                  <FileText size={24} style={{ color: "var(--color-ladrillo)" }} />
                   <div>
-                    <h3 style={{ fontSize: "1.3rem", color: "#fff" }}>
+                    <h3 style={{ fontSize: "1.3rem", color: "var(--text-main)" }}>
                       Estado del Legajo Escolar
                     </h3>
-                    <p style={{ fontSize: "0.8rem", color: "var(--text-muted)" }}>
-                      {publicStudentInfo.apellido}, {publicStudentInfo.nombre} | Curso: {publicStudentInfo.ano_actual} Año división {publicStudentInfo.division} - Turno {publicStudentInfo.turno}
+                    <p style={{ fontSize: "0.8rem", color: "var(--text-muted)", fontWeight: 500 }}>
+                      {publicStudentInfo.apellido}, {publicStudentInfo.nombre} | Curso: {publicStudentInfo.ano_actual} Año div. {publicStudentInfo.division} - Turno {publicStudentInfo.turno}
                     </p>
                   </div>
                 </div>
