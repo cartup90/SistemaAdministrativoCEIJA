@@ -473,8 +473,6 @@ export default function StudentModule({ user }) {
                   {isAdmin && <th>DNI</th>}
                   <th>Estudiante</th>
                   <th>Año Actual</th>
-                  <th>Curso/Div</th>
-                  <th>Turno</th>
                   <th>Estado</th>
                   <th style={{ textAlign: "center" }}>Previas</th>
                   <th style={{ textAlign: "center" }}>Apto Titular</th>
@@ -489,8 +487,6 @@ export default function StudentModule({ user }) {
                       {isAdmin && <td style={{ fontFamily: "monospace" }}>{student.dni}</td>}
                       <td style={{ fontWeight: 600 }}>{student.apellido}, {student.nombre}</td>
                       <td>{student.ano_actual || "-"}</td>
-                      <td>{student.division || "Única"}</td>
-                      <td>{student.turno}</td>
                       <td>
                         <span 
                           className="badge" 

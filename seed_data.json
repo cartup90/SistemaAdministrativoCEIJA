@@ -348,7 +348,7 @@
       "nivel_educativo_finalizado": "Segundo año completo",
       "motivo_secundario": "CUMPLIR UN ULTIMO DESEO ,QUE ANTES NO PUDE ,POR CIRCUNSTANCIAS DE MI VIDA",
       "ano_ingreso": "3°",
-      "ano_actual": "2°",
+      "ano_actual": "3°",
       "division": "Única",
       "turno": "Noche",
       "estado": "Activo",
@@ -766,7 +766,7 @@
       "nivel_educativo_finalizado": "Primer año completo",
       "motivo_secundario": "Terminar",
       "ano_ingreso": "2°",
-      "ano_actual": "1°",
+      "ano_actual": "2°",
       "division": "Única",
       "turno": "Noche",
       "estado": "Activo",
@@ -989,7 +989,7 @@
       "nivel_educativo_finalizado": "Segundo año completo",
       "motivo_secundario": "Me motiva a superarme a mis misma con cosas que tenia pendiente, a darle una mejor vida a mi hija con la salida laboral que tiene terminar el secundario, y realmente estudiar salva vidas, te ayuda a despejarte y a salir de una depresión como la que estaba cruzando",
       "ano_ingreso": "3°",
-      "ano_actual": "2°",
+      "ano_actual": "3°",
       "division": "Única",
       "turno": "Noche",
       "estado": "Activo",
@@ -1742,7 +1742,7 @@
       "nivel_educativo_finalizado": "Primer año completo",
       "motivo_secundario": "Me motiva porque me gustaría tener el secundario completo",
       "ano_ingreso": "1°",
-      "ano_actual": "2°",
+      "ano_actual": "1°",
       "division": "Única",
       "turno": "Noche",
       "estado": "Activo",
@@ -2849,7 +2849,7 @@
       "nivel_educativo_finalizado": "Quinto año completo",
       "motivo_secundario": "Tener nuevas oportunidades y seguir estudiando algo más . Para un futuro",
       "ano_ingreso": "3°",
-      "ano_actual": "2°",
+      "ano_actual": "3°",
       "division": "Única",
       "turno": "Noche",
       "estado": "Activo",
@@ -2933,7 +2933,7 @@
       "nivel_educativo_finalizado": "Primer año completo",
       "motivo_secundario": "Para ser alguien en la vida",
       "ano_ingreso": "2°",
-      "ano_actual": "1°",
+      "ano_actual": "2°",
       "division": "Única",
       "turno": "Noche",
       "estado": "Activo",
@@ -9473,7 +9473,7 @@
         "delitos_sexuales": "Presentado"
       },
       "materias": [
-        "Prob Salud Hum y Amb"
+        "Problemáticas de la salúd humana y ambiental"
       ],
       "anos_dicta": [
         "3°"
@@ -9499,7 +9499,7 @@
         "delitos_sexuales": "Presentado"
       },
       "materias": [
-        "FIS-QUÍM.",
+        "Físico-Química",
         "QUÍMICA"
       ],
       "anos_dicta": [
@@ -9549,8 +9549,8 @@
         "delitos_sexuales": "Presentado"
       },
       "materias": [
-        "FORM P/ TRAB.",
-        "DTySS"
+        "Formación para el trabajo",
+        "Derecho del trabajo y de la seguridad social"
       ],
       "anos_dicta": [
         "1°",
@@ -9577,8 +9577,8 @@
         "delitos_sexuales": "Presentado"
       },
       "materias": [
-        "Amb Des Soc",
-        "EVSO"
+        "Ambiente, desarrollo y sociedad",
+        "Espacio de vinculación con el sector"
       ],
       "anos_dicta": [
         "3°"
@@ -9606,7 +9606,7 @@
       "materias": [
         "HISTORIA",
         "TALLER",
-        "E S A A L",
+        "Espacio y sociedad en Argentina y America Latina",
         "SOCIOLOGÍA"
       ],
       "anos_dicta": [
@@ -9770,7 +9770,7 @@
         "delitos_sexuales": "Presentado"
       },
       "materias": [
-        "PEA"
+        "Problemáticas económicas actuales"
       ],
       "anos_dicta": [
         "2°"
@@ -9850,9 +9850,9 @@
       },
       "materias": [
         "BIOLOGÍA",
-        "CSD",
+        "Ciencia, sociedad y desarrollo",
         "FISICA",
-        "Prev Sal Pub Com"
+        "Promoción para la salúd pública y comunitaria"
       ],
       "anos_dicta": [
         "1°",
@@ -9906,8 +9906,8 @@
         "delitos_sexuales": "Presentado"
       },
       "materias": [
-        "T.O.V.O.",
-        "PSIC SOCIAL"
+        "Taller de orientación vocacional y ocupacional",
+        "Psicología social"
       ],
       "anos_dicta": [
         "1°",
@@ -9940,7 +9940,7 @@
         "1°",
         "2°"
       ],
-      "area": "Naturales"
+      "area": ""
     },
     {
       "dni": "25698164",
@@ -10036,7 +10036,7 @@
             },
             "Martes": null,
             "Miércoles": {
-              "materia": "FIS-QUÍM.",
+              "materia": "Físico-Química",
               "profesor": "Miguel Angel Bueno",
               "profesorDni": "16831133"
             },
@@ -10067,7 +10067,7 @@
               "profesorDni": "32314198"
             },
             "Miércoles": {
-              "materia": "FIS-QUÍM.",
+              "materia": "Físico-Química",
               "profesor": "Miguel Angel Bueno",
               "profesorDni": "16831133"
             },
@@ -10098,7 +10098,7 @@
               "profesorDni": "32314198"
             },
             "Miércoles": {
-              "materia": "FIS-QUÍM.",
+              "materia": "Físico-Química",
               "profesor": "Miguel Angel Bueno",
               "profesorDni": "16831133"
             },
@@ -10134,12 +10134,12 @@
               "profesorDni": "31248582"
             },
             "Jueves": {
-              "materia": "FORM P/ TRAB.",
+              "materia": "Formación para el trabajo",
               "profesor": "Miguel Daniele",
               "profesorDni": "17909737"
             },
             "Viernes": {
-              "materia": "T.O.V.O.",
+              "materia": "Taller de orientación vocacional y ocupacional",
               "profesor": "Andrea Viloria",
               "profesorDni": "27929322"
             }
@@ -10196,12 +10196,12 @@
               "profesorDni": "31248582"
             },
             "Jueves": {
-              "materia": "FORM P/ TRAB.",
+              "materia": "Formación para el trabajo",
               "profesor": "Miguel Daniele",
               "profesorDni": "17909737"
             },
             "Viernes": {
-              "materia": "T.O.V.O.",
+              "materia": "Taller de orientación vocacional y ocupacional",
               "profesor": "Andrea Viloria",
               "profesorDni": "27929322"
             }
@@ -10223,7 +10223,7 @@
               "profesorDni": "31248582"
             },
             "Jueves": {
-              "materia": "FORM P/ TRAB.",
+              "materia": "Formación para el trabajo",
               "profesor": "Miguel Daniele",
               "profesorDni": "17909737"
             },
@@ -10257,7 +10257,7 @@
           "fin": "19:20",
           "dias": {
             "Lunes": {
-              "materia": "CSD",
+              "materia": "Ciencia, sociedad y desarrollo",
               "profesor": "Laura Tione",
               "profesorDni": "31248582"
             },
@@ -10272,12 +10272,12 @@
               "profesorDni": "31248582"
             },
             "Jueves": {
-              "materia": "DTySS",
+              "materia": "Derecho del trabajo y de la seguridad social",
               "profesor": "Miguel Daniele",
               "profesorDni": "17909737"
             },
             "Viernes": {
-              "materia": "PSIC SOCIAL",
+              "materia": "Psicología social",
               "profesor": "Andrea Viloria",
               "profesorDni": "27929322"
             }
@@ -10288,7 +10288,7 @@
           "fin": "19:50",
           "dias": {
             "Lunes": {
-              "materia": "CSD",
+              "materia": "Ciencia, sociedad y desarrollo",
               "profesor": "Laura Tione",
               "profesorDni": "31248582"
             },
@@ -10303,12 +10303,12 @@
               "profesorDni": "31248582"
             },
             "Jueves": {
-              "materia": "DTySS",
+              "materia": "Derecho del trabajo y de la seguridad social",
               "profesor": "Miguel Daniele",
               "profesorDni": "17909737"
             },
             "Viernes": {
-              "materia": "PSIC SOCIAL",
+              "materia": "Psicología social",
               "profesor": "Andrea Viloria",
               "profesorDni": "27929322"
             }
@@ -10319,7 +10319,7 @@
           "fin": "20:20",
           "dias": {
             "Lunes": {
-              "materia": "CSD",
+              "materia": "Ciencia, sociedad y desarrollo",
               "profesor": "Laura Tione",
               "profesorDni": "31248582"
             },
@@ -10334,12 +10334,12 @@
               "profesorDni": "31248582"
             },
             "Jueves": {
-              "materia": "DTySS",
+              "materia": "Derecho del trabajo y de la seguridad social",
               "profesor": "Miguel Daniele",
               "profesorDni": "17909737"
             },
             "Viernes": {
-              "materia": "PSIC SOCIAL",
+              "materia": "Psicología social",
               "profesor": "Andrea Viloria",
               "profesorDni": "27929322"
             }
@@ -10350,7 +10350,7 @@
           "fin": "20:50",
           "dias": {
             "Lunes": {
-              "materia": "CSD",
+              "materia": "Ciencia, sociedad y desarrollo",
               "profesor": "Laura Tione",
               "profesorDni": "31248582"
             },
@@ -10412,7 +10412,7 @@
           "fin": "21:30",
           "dias": {
             "Lunes": {
-              "materia": "PEA",
+              "materia": "Problemáticas económicas actuales",
               "profesor": "Diego Pinto",
               "profesorDni": "27805117"
             },
@@ -10443,7 +10443,7 @@
           "fin": "22:00",
           "dias": {
             "Lunes": {
-              "materia": "PEA",
+              "materia": "Problemáticas económicas actuales",
               "profesor": "Diego Pinto",
               "profesorDni": "27805117"
             },
@@ -10466,7 +10466,7 @@
           "fin": "22:30",
           "dias": {
             "Lunes": {
-              "materia": "PEA",
+              "materia": "Problemáticas económicas actuales",
               "profesor": "Diego Pinto",
               "profesorDni": "27805117"
             },
@@ -10484,6 +10484,21 @@
       "turno": "Noche",
       "bloques": [
         {
+          "inicio": "18:00",
+          "fin": "18:50",
+          "dias": {
+            "Lunes": null,
+            "Martes": {
+              "materia": "Alfabetización en Informática",
+              "profesor": "",
+              "profesorDni": ""
+            },
+            "Miércoles": null,
+            "Jueves": null,
+            "Viernes": null
+          }
+        },
+        {
           "inicio": "18:50",
           "fin": "19:20",
           "dias": {
@@ -10493,20 +10508,16 @@
               "profesorDni": "31104282"
             },
             "Martes": {
-              "materia": "INICIO 18:15 hs                                                          Trayecto Formativo en Informática",
+              "materia": "Alfabetización en Informática",
               "profesor": "",
               "profesorDni": ""
             },
             "Miércoles": {
-              "materia": "Amb Des Soc",
+              "materia": "Ambiente, desarrollo y sociedad",
               "profesor": "Santiago Giayetto",
               "profesorDni": "28821413"
             },
-            "Jueves": {
-              "materia": "EVSO",
-              "profesor": "Santiago Giayetto",
-              "profesorDni": "28821413"
-            },
+            "Jueves": null,
             "Viernes": {
               "materia": "MATEMÁTICA",
               "profesor": "Eduardo Toro",
@@ -10524,20 +10535,16 @@
               "profesorDni": "31104282"
             },
             "Martes": {
-              "materia": "EVSO",
-              "profesor": "Santiago Giayetto",
-              "profesorDni": "28821413"
+              "materia": "Alfabetización en Informática",
+              "profesor": "",
+              "profesorDni": ""
             },
             "Miércoles": {
-              "materia": "Amb Des Soc",
+              "materia": "Ambiente, desarrollo y sociedad",
               "profesor": "Santiago Giayetto",
               "profesorDni": "28821413"
             },
-            "Jueves": {
-              "materia": "EVSO",
-              "profesor": "Santiago Giayetto",
-              "profesorDni": "28821413"
-            },
+            "Jueves": null,
             "Viernes": {
               "materia": "MATEMÁTICA",
               "profesor": "Eduardo Toro",
@@ -10555,20 +10562,16 @@
               "profesorDni": "TCH2017"
             },
             "Martes": {
-              "materia": "EVSO",
-              "profesor": "Santiago Giayetto",
-              "profesorDni": "28821413"
+              "materia": "Alfabetización en Informática",
+              "profesor": "",
+              "profesorDni": ""
             },
             "Miércoles": {
-              "materia": "Amb Des Soc",
+              "materia": "Ambiente, desarrollo y sociedad",
               "profesor": "Santiago Giayetto",
               "profesorDni": "28821413"
             },
-            "Jueves": {
-              "materia": "EVSO",
-              "profesor": "Santiago Giayetto",
-              "profesorDni": "28821413"
-            },
+            "Jueves": null,
             "Viernes": {
               "materia": "MATEMÁTICA",
               "profesor": "Eduardo Toro",
@@ -10586,17 +10589,17 @@
               "profesorDni": "TCH2017"
             },
             "Martes": {
-              "materia": "EVSO",
-              "profesor": "Santiago Giayetto",
-              "profesorDni": "28821413"
+              "materia": "Alfabetización en Informática",
+              "profesor": "",
+              "profesorDni": ""
             },
             "Miércoles": {
-              "materia": "E S A A L",
+              "materia": "Espacio y sociedad en Argentina y America Latina",
               "profesor": "Pablo Glineur Berne",
               "profesorDni": "24783663"
             },
             "Jueves": {
-              "materia": "Prev Sal Pub Com",
+              "materia": "Promoción para la salúd pública y comunitaria",
               "profesor": "Laura Tione",
               "profesorDni": "31248582"
             },
@@ -10643,12 +10646,12 @@
           "fin": "21:30",
           "dias": {
             "Lunes": {
-              "materia": "E S A A L",
+              "materia": "Espacio y sociedad en Argentina y America Latina",
               "profesor": "Pablo Glineur Berne",
               "profesorDni": "24783663"
             },
             "Martes": {
-              "materia": "Prob Salud Hum y Amb",
+              "materia": "Problemáticas de la salúd humana y ambiental",
               "profesor": "Maximiliano Ismael Bazid",
               "profesorDni": "27523035"
             },
@@ -10658,7 +10661,7 @@
               "profesorDni": "24783663"
             },
             "Jueves": {
-              "materia": "Prev Sal Pub Com",
+              "materia": "Promoción para la salúd pública y comunitaria",
               "profesor": "Laura Tione",
               "profesorDni": "31248582"
             },
@@ -10674,12 +10677,12 @@
           "fin": "22:00",
           "dias": {
             "Lunes": {
-              "materia": "E S A A L",
+              "materia": "Espacio y sociedad en Argentina y America Latina",
               "profesor": "Pablo Glineur Berne",
               "profesorDni": "24783663"
             },
             "Martes": {
-              "materia": "Prob Salud Hum y Amb",
+              "materia": "Problemáticas de la salúd humana y ambiental",
               "profesor": "Maximiliano Ismael Bazid",
               "profesorDni": "27523035"
             },
@@ -10689,7 +10692,7 @@
               "profesorDni": "24783663"
             },
             "Jueves": {
-              "materia": "Prev Sal Pub Com",
+              "materia": "Promoción para la salúd pública y comunitaria",
               "profesor": "Laura Tione",
               "profesorDni": "31248582"
             },
@@ -10702,7 +10705,7 @@
           "dias": {
             "Lunes": null,
             "Martes": {
-              "materia": "Prob Salud Hum y Amb",
+              "materia": "Problemáticas de la salúd humana y ambiental",
               "profesor": "Maximiliano Ismael Bazid",
               "profesorDni": "27523035"
             },
@@ -10712,7 +10715,7 @@
               "profesorDni": "24783663"
             },
             "Jueves": {
-              "materia": "Prev Sal Pub Com",
+              "materia": "Promoción para la salúd pública y comunitaria",
               "profesor": "Laura Tione",
               "profesorDni": "31248582"
             },

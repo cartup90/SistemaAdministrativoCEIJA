@@ -1,7 +1,7 @@
 // src/App.jsx
 import React, { useState, useEffect } from "react";
 import { Menu, LogOut, Newspaper, Calendar, Search, FileText, X, LogIn, AlertTriangle, CheckCircle2, BookOpen, Sparkles, Trophy, Cpu, ChevronRight } from "lucide-react";
-import { onAuthChange, logout, getStudentPublicInfo } from "./firebase";
+import { onAuthChange, logout, getStudentPublicInfo, getSchedules } from "./firebase";
 import Auth from "./components/Auth";
 import Sidebar from "./components/Sidebar";
 import StudentModule from "./components/StudentModule";
@@ -32,6 +32,19 @@ export default function App() {
   const [publicSearchLoading, setPublicSearchLoading] = useState(false);
   const [lightboxImg, setLightboxImg] = useState(null);
   const [lightboxTitle, setLightboxTitle] = useState("");
+  const [schedules, setSchedules] = useState([]);
+
+  useEffect(() => {
+    const fetchSchedules = async () => {
+      try {
+        const list = await getSchedules();
+        setSchedules(list || []);
+      } catch (err) {
+        console.error("Error loading schedules in App:", err);
+      }
+    };
+    fetchSchedules();
+  }, []);
 
   // Subscribe to Authentication State changes
   useEffect(() => {
@@ -152,7 +165,7 @@ export default function App() {
               SisGest
             </h1>
             <span style={{ fontSize: "0.75rem", color: "var(--text-muted)", background: "rgba(139, 38, 53, 0.05)", padding: "0.2rem 0.5rem", borderRadius: "var(--radius-sm)", fontWeight: 600 }}>
-              CEIJA N° 12 Alberdi
+              CEIJA Nº12 "Remedios Escalada de San Martín" Anexo Bº Alberdi
             </span>
           </div>
 
@@ -220,9 +233,9 @@ export default function App() {
                     lineHeight: 1.1 
                   }}
                 >
-                  CEIJA N° 12
+                  CEIJA Nº12 "Remedios Escalada de San Martín"
                   <span style={{ display: "block", fontSize: "0.65em", fontWeight: 600, color: "var(--color-ladrillo)", marginTop: "0.25rem" }}>
-                    "Remedios Escalada de San Martín"
+                    Anexo Bº Alberdi
                   </span>
                 </h2>
                 <p style={{ color: "var(--text-muted)", fontSize: "1.05rem", fontWeight: 500, maxWidth: "600px", lineHeight: 1.6 }}>
@@ -402,7 +415,7 @@ export default function App() {
           </div>
         </div>
 
-        {/* Campus / Virtual Classroom Section (Robot CEIJA) */}
+        {/* Consultas Administrativas Section (Robot CEIJA) */}
         {activePublicTab === "news" && (
           <section 
             className="glass-card animate-fade-in"
@@ -437,17 +450,20 @@ export default function App() {
               
               <div>
                 <h3 style={{ fontSize: "1.4rem", color: "var(--color-ladrillo)", marginBottom: "0.5rem", fontWeight: 800 }}>
-                  Aulas Virtuales e Innovación
+                  Consultas Administrativas para Estudiantes
                 </h3>
-                <p style={{ color: "var(--text-muted)", fontSize: "0.9rem", maxWidth: "600px", lineHeight: 1.5 }}>
-                  Accedé al campus digital del CEIJA Alberdi. Espacio de formación tecnológica, talleres y soporte pedagógico para todos los estudiantes y profesores del anexo.
-                </p>
+                <div style={{ color: "var(--text-muted)", fontSize: "0.9rem", maxWidth: "600px", lineHeight: 1.6, display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+                  <p><strong>• ¿Qué necesito para anotarme?</strong> Se requiere fotocopia de DNI, constancia de CUIL, certificado de estudios anteriores (primaria o analítico parcial) y C.U.S.</p>
+                  <p><strong>• ¿Quién puede ingresar al secundario de adultos y con qué edad?</strong> Pueden ingresar jóvenes y adultos a partir de los 18 años de edad que no hayan completado el nivel secundario.</p>
+                  <p style={{ fontSize: "0.8rem", color: "var(--text-inactive)", fontStyle: "italic", marginTop: "0.25rem" }}>
+                    * Esta sección de consultas está en desarrollo y los accesos aún no redirigen a ningún lado.
+                  </p>
+                </div>
               </div>
             </div>
             
-            <button className="btn btn-primary" onClick={() => window.open("#", "_blank")}>
-              <Cpu size={16} />
-              <span>Ingresar a Campus</span>
+            <button className="btn btn-secondary" disabled style={{ opacity: 0.6, cursor: "not-allowed" }}>
+              <span>Consultar Preguntas Frecuentes</span>
             </button>
           </section>
         )}
@@ -513,8 +529,8 @@ export default function App() {
             ))}
           </div>
           <div style={{ padding: "2rem max(1rem, 5%)", textAlign: "center", fontSize: "0.85rem", color: "var(--text-muted)" }}>
-            <p style={{ fontWeight: 700, color: "var(--text-main)" }}>CEIJA N° 12 "Remedios Escalada de San Martín" — Anexo Alberdi</p>
-            <p style={{ fontSize: "0.75rem", marginTop: "0.35rem" }}>© 2026 Sistema de Gestión Administrativa SisGest. Diseñado con identidad comunitaria local.</p>
+            <p style={{ fontWeight: 700, color: "var(--text-main)" }}>CEIJA Nº12 "Remedios Escalada de San Martín" Anexo Bº Alberdi</p>
+            <p style={{ fontSize: "0.75rem", marginTop: "0.35rem" }}>© 2026 Sistema de Gestión Administrativa SisGest. Diseñado con identidad comunitaria local. Programador: Catriel Pardo.</p>
           </div>
         </footer>
 
@@ -557,6 +573,119 @@ export default function App() {
                   <X size={20} />
                 </button>
               </div>
+
+              {/* Horario del día actual */}
+              {(() => {
+                const daysMap = {
+                  1: "Lunes",
+                  2: "Martes",
+                  3: "Miércoles",
+                  4: "Jueves",
+                  5: "Viernes"
+                };
+                const todayNum = new Date().getDay();
+                const todayName = daysMap[todayNum];
+                const isWeekend = todayNum === 0 || todayNum === 6;
+                const displayDay = isWeekend ? "Lunes" : todayName;
+
+                const studentSchedule = schedules.find(s => s.ano === publicStudentInfo.ano_actual);
+                
+                if (!studentSchedule || !studentSchedule.bloques || studentSchedule.bloques.length === 0) {
+                  return (
+                    <div className="glass-card" style={{ padding: "1.25rem", background: "rgba(0,0,0,0.02)", marginBottom: "1.5rem", borderLeft: "4px solid var(--color-warning)" }}>
+                      <h4 style={{ color: "var(--text-main)", marginBottom: "0.25rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                        <Calendar size={18} style={{ color: "var(--color-warning)" }} />
+                        <span>Horario Escolar</span>
+                      </h4>
+                      <p style={{ color: "var(--text-muted)", fontSize: "0.85rem" }}>
+                        No hay horarios cargados para {publicStudentInfo.ano_actual} Año todavía.
+                      </p>
+                    </div>
+                  );
+                }
+
+                // Find active blocks for today (or reference day)
+                const activeBlocks = studentSchedule.bloques.filter(b => {
+                  const cell = b.dias ? b.dias[displayDay] : null;
+                  return cell && cell.materia && cell.materia !== "---------------" && cell.materia.toUpperCase() !== "RECREO";
+                });
+
+                if (activeBlocks.length === 0) {
+                  return (
+                    <div className="glass-card" style={{ padding: "1.25rem", background: "rgba(0,0,0,0.02)", marginBottom: "1.5rem", borderLeft: "4px solid var(--color-ocre)" }}>
+                      <h4 style={{ color: "var(--text-main)", marginBottom: "0.25rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                        <Calendar size={18} style={{ color: "var(--color-ocre)" }} />
+                        <span>Horario de Hoy ({todayName || "Fin de semana"})</span>
+                      </h4>
+                      <p style={{ color: "var(--text-muted)", fontSize: "0.85rem" }}>
+                        {isWeekend 
+                          ? "Hoy es fin de semana, no hay clases programadas." 
+                          : `No tenés materias programadas para hoy (${todayName}).`}
+                      </p>
+                    </div>
+                  );
+                }
+
+                // Get first start time and last end time
+                const startTime = studentSchedule.bloques.find(b => {
+                  const cell = b.dias ? b.dias[displayDay] : null;
+                  return cell && cell.materia && cell.materia !== "---------------";
+                })?.inicio;
+
+                const reversedBlocks = [...studentSchedule.bloques].reverse();
+                const endTime = reversedBlocks.find(b => {
+                  const cell = b.dias ? b.dias[displayDay] : null;
+                  return cell && cell.materia && cell.materia !== "---------------";
+                })?.fin;
+
+                // Unique subject list for today
+                const subjects = activeBlocks.map(b => b.dias[displayDay].materia);
+                const uniqueSubjects = [...new Set(subjects)];
+
+                return (
+                  <div className="glass-card animate-fade-in" style={{ padding: "1.25rem", background: "rgba(244, 180, 26, 0.05)", borderLeft: "5px solid var(--color-ocre)", marginBottom: "1.5rem" }}>
+                    <div className="flex-between" style={{ marginBottom: "0.5rem" }}>
+                      <h4 style={{ color: "var(--color-ladrillo)", display: "flex", alignItems: "center", gap: "0.5rem", fontWeight: 800 }}>
+                        <Calendar size={18} style={{ color: "var(--color-ladrillo)" }} />
+                        <span>
+                          {isWeekend ? `Horario de Cursado (${displayDay})` : `Horario para Hoy (${todayName})`}
+                        </span>
+                      </h4>
+                      {isWeekend && (
+                        <span className="badge badge-warning" style={{ fontSize: "0.7rem" }}>Fin de Semana</span>
+                      )}
+                    </div>
+                    
+                    <p style={{ fontSize: "1.05rem", fontWeight: 700, color: "var(--text-main)", marginBottom: "0.5rem" }}>
+                      {publicStudentInfo.ano_actual} Año: de <span style={{ color: "var(--color-ladrillo)" }}>{startTime}</span> a <span style={{ color: "var(--color-ladrillo)" }}>{endTime}</span> hs
+                    </p>
+
+                    <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
+                      <span style={{ fontSize: "0.8rem", color: "var(--text-muted)", fontWeight: 600 }}>
+                        Materias programadas:
+                      </span>
+                      <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", marginTop: "0.15rem" }}>
+                        {uniqueSubjects.map((sub, sIdx) => (
+                          <span 
+                            key={sIdx} 
+                            style={{ 
+                              fontSize: "0.75rem", 
+                              backgroundColor: "rgba(139, 38, 53, 0.06)", 
+                              color: "var(--color-ladrillo)", 
+                              padding: "0.25rem 0.6rem", 
+                              borderRadius: "var(--radius-sm)", 
+                              fontWeight: 600,
+                              border: "1px solid rgba(139, 38, 53, 0.12)"
+                            }}
+                          >
+                            {sub}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })()}
 
               {/* Document checklist */}
               <div className="glass-card" style={{ padding: "1.25rem", background: "rgba(0,0,0,0.2)", marginBottom: "1.5rem" }}>
