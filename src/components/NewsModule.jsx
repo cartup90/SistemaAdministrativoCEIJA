@@ -15,7 +15,7 @@ import { getNews, saveNews, deleteNews } from "../firebase";
 import { useDialog } from "../context/DialogContext";
 
 export default function NewsModule({ user }) {
-  const isAdmin = user.role === "admin";
+  const isAdmin = user && user.role === "admin";
   const { confirm, alert } = useDialog();
   const [news, setNews] = useState([]);
   const [loading, setLoading] = useState(true);

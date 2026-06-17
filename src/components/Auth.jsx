@@ -1,9 +1,9 @@
 // src/components/Auth.jsx
 import React, { useState } from "react";
-import { LogIn, Calendar, AlertCircle } from "lucide-react";
+import { LogIn, Calendar, AlertCircle, ArrowLeft } from "lucide-react";
 import { login, isMock } from "../firebase";
 
-export default function Auth({ onLoginSuccess, onViewPublicSchedules }) {
+export default function Auth({ onLoginSuccess, onBackToPublic }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -153,13 +153,13 @@ export default function Auth({ onLoginSuccess, onViewPublicSchedules }) {
         </div>
 
         <button 
-          onClick={onViewPublicSchedules}
+          onClick={onBackToPublic}
           className="btn btn-secondary"
           style={{ width: "100%" }}
           disabled={loading}
         >
-          <Calendar size={18} />
-          <span>Ver Horarios Públicos</span>
+          <ArrowLeft size={18} />
+          <span>Volver al Portal Público</span>
         </button>
       </div>
     </div>

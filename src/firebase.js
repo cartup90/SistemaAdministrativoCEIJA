@@ -246,6 +246,35 @@ export const getStudents = async (filters = {}) => {
   return applyStudentFilters(processedStudents, filters);
 };
 
+export const getStudentPublicInfo = async (dni) => {
+  let student = null;
+  if (!isMock) {
+    const docRef = doc(db, "estudiantes", dni);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      student = docSnap.data();
+    }
+  } else {
+    const students = getMockItems(MOCK_STORAGE_KEYS.STUDENTS);
+    student = students.find(s => s.dni.toString() === dni.toString());
+  }
+
+  if (student) {
+    return {
+      dni: student.dni,
+      nombre: student.nombre,
+      apellido: student.apellido,
+      ano_actual: student.ano_actual,
+      division: student.division,
+      turno: student.turno,
+      estado: student.estado,
+      documentos: student.documentos || {},
+      previas: student.previas || []
+    };
+  }
+  return null;
+};
+
 const applyStudentFilters = (students, filters) => {
   let result = [...students];
 
@@ -399,6 +428,9 @@ const applyTeacherFilters = (teachers, filters) => {
   }
   if (filters.ano_dicta) {
     result = result.filter(t => t.anos_dicta && t.anos_dicta.includes(filters.ano_dicta));
+  }
+  if (filters.area) {
+    result = result.filter(t => t.area === filters.area);
   }
   if (filters.designacion) {
     result = result.filter(t => t.designacion === filters.designacion);

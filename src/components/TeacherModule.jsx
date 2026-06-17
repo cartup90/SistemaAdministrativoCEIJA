@@ -27,7 +27,8 @@ export default function TeacherModule({ user }) {
     ano_dicta: "",
     designacion: "",
     estado: "", // Default empty (Todos)
-    documentacion_incompleta: ""
+    documentacion_incompleta: "",
+    area: ""
   });
 
   // Modals state
@@ -77,7 +78,8 @@ export default function TeacherModule({ user }) {
         delitos_sexuales: "Pendiente"
       },
       materias: [],
-      anos_dicta: []
+      anos_dicta: [],
+      area: ""
     };
   }
 
@@ -270,6 +272,19 @@ export default function TeacherModule({ user }) {
               <option value="Inactivo">Inactivo</option>
             </select>
           </div>
+
+          <div className="form-group" style={{ width: "160px", marginBottom: 0 }}>
+            <label className="form-label" htmlFor="teach_area">Por Área Curricular</label>
+            <select id="teach_area" name="area" className="form-control" value={filters.area} onChange={handleFilterChange}>
+              <option value="">Todas</option>
+              <option value="Naturales">Ciencias Naturales</option>
+              <option value="Sociales">Ciencias Sociales</option>
+              <option value="Lengua e Inglés">Lengua e Inglés</option>
+              <option value="ATP">Área Técnico Profesional (ATP)</option>
+              <option value="Coordinación">Coordinación</option>
+              <option value="Otro">Otro</option>
+            </select>
+          </div>
         </div>
 
         {/* Advanced Filter Row */}
@@ -315,7 +330,21 @@ export default function TeacherModule({ user }) {
                   return (
                     <tr key={teacher.dni}>
                       <td style={{ fontFamily: "monospace" }}>{teacher.dni}</td>
-                      <td style={{ fontWeight: 600 }}>{teacher.apellido}, {teacher.nombre}</td>
+                      <td style={{ fontWeight: 600 }}>
+                        <div>{teacher.apellido}, {teacher.nombre}</div>
+                        <div style={{ display: "flex", gap: "0.25rem", marginTop: "0.25rem", alignItems: "center", flexWrap: "wrap" }}>
+                          {teacher.area && (
+                            <span className="badge" style={{ backgroundColor: "rgba(99, 102, 241, 0.15)", color: "var(--primary)", fontSize: "0.65rem", padding: "0.1rem 0.35rem", textTransform: "none" }}>
+                              {teacher.area}
+                            </span>
+                          )}
+                          {teacher.anos_dicta && teacher.anos_dicta.length > 0 && (
+                            <span className="badge" style={{ backgroundColor: "rgba(255, 255, 255, 0.08)", color: "var(--text-muted)", fontSize: "0.65rem", padding: "0.1rem 0.35rem", textTransform: "none" }}>
+                              Años: {teacher.anos_dicta.join(", ")}
+                            </span>
+                          )}
+                        </div>
+                      </td>
                       <td>{teacher.telefono || "Sin registrar"}</td>
                       <td>
                         {teacher.designacion}
@@ -455,6 +484,7 @@ export default function TeacherModule({ user }) {
                     </>
                   )}
                   <div><strong>Estado:</strong></div> <div>{selectedTeacher.estado}</div>
+                  <div><strong>Área Curricular:</strong></div> <div>{selectedTeacher.area || "Sin asignar"}</div>
                   <div><strong>Años de dictado:</strong></div> <div>{selectedTeacher.anos_dicta && selectedTeacher.anos_dicta.length > 0 ? selectedTeacher.anos_dicta.join(", ") : "N/A"}</div>
                 </div>
               </div>
@@ -671,6 +701,55 @@ export default function TeacherModule({ user }) {
                     <option value="Baja">Baja</option>
                     <option value="Inactivo">Inactivo</option>
                   </select>
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label" htmlFor="tch_form_area">Área Curricular *</label>
+                  <select 
+                    id="tch_form_area"
+                    className="form-control"
+                    value={formValues.area || ""}
+                    onChange={(e) => setFormValues(prev => ({ ...prev, area: e.target.value }))}
+                  >
+                    <option value="">Sin asignar</option>
+                    <option value="Naturales">Ciencias Naturales</option>
+                    <option value="Sociales">Ciencias Sociales</option>
+                    <option value="Lengua e Inglés">Lengua e Inglés</option>
+                    <option value="ATP">Área Técnico Profesional (ATP)</option>
+                    <option value="Coordinación">Coordinación</option>
+                    <option value="Otro">Otro</option>
+                  </select>
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label">Años de Dictado</label>
+                  <div style={{ display: "flex", gap: "0.75rem", marginTop: "0.5rem", alignItems: "center" }}>
+                    {["1°", "2°", "3°"].map(yr => {
+                      const isChecked = formValues.anos_dicta && formValues.anos_dicta.includes(yr);
+                      return (
+                        <label key={yr} style={{ display: "inline-flex", alignItems: "center", gap: "0.25rem", cursor: "pointer", fontSize: "0.85rem", color: "var(--text-muted)" }}>
+                          <input 
+                            type="checkbox"
+                            value={yr}
+                            checked={isChecked}
+                            onChange={(e) => {
+                              const checked = e.target.checked;
+                              setFormValues(prev => {
+                                const currentAnos = prev.anos_dicta || [];
+                                const newAnos = checked 
+                                  ? [...currentAnos, yr] 
+                                  : currentAnos.filter(x => x !== yr);
+                                newAnos.sort();
+                                return { ...prev, anos_dicta: newAnos };
+                              });
+                            }}
+                            style={{ accentColor: "var(--primary)" }}
+                          />
+                          <span>{yr}</span>
+                        </label>
+                      );
+                    })}
+                  </div>
                 </div>
 
                 <div className="form-group" style={{ gridColumn: "span 3" }}>
