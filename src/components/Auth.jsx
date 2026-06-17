@@ -77,15 +77,14 @@ export default function Auth({ onLoginSuccess, onBackToPublic }) {
               border: "1px dashed rgba(99, 102, 241, 0.3)", 
               borderRadius: "var(--radius-sm)", 
               padding: "0.75rem",
-              fontSize: "0.8rem",
+              fontSize: "0.85rem",
               color: "var(--text-muted)",
               lineHeight: 1.4
             }}
           >
             <strong>Modo Demo Local Activo</strong><br />
-            - Use <code>admin@ceija.edu.ar</code> para rol <strong>Administrador</strong>.<br />
-            - Use <code>docente@ceija.edu.ar</code> para rol <strong>Usuario Común</strong>.<br />
-            - La contraseña puede ser cualquiera.
+            - Admin: <code>cartup90@gmail.com</code> (contraseña: <code>admin123</code>)<br />
+            - Docente: <code>docente@ceija.edu.ar</code> (contraseña: <code>docente123</code>)
           </div>
         )}
 

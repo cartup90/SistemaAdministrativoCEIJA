@@ -5,7 +5,8 @@ import {
   signInWithEmailAndPassword, 
   signOut, 
   onAuthStateChanged,
-  createUserWithEmailAndPassword
+  createUserWithEmailAndPassword,
+  updatePassword
 } from "firebase/auth";
 import { 
   getFirestore, 
@@ -94,6 +95,30 @@ const initializeMockData = () => {
     localStorage.setItem(MOCK_STORAGE_KEYS.SCHEDULES, JSON.stringify(seedData.horarios || []));
   }
 
+  // Seed mock users if not present, or if legacy credentials exist
+  const currentUsersRaw = localStorage.getItem("sisgest_users");
+  let needUsersSeeding = !currentUsersRaw;
+  if (currentUsersRaw) {
+    try {
+      const parsed = JSON.parse(currentUsersRaw);
+      const hasOldAdmin = parsed.some(u => u.email.toLowerCase().includes("admin@ceija"));
+      const hasNewAdmin = parsed.some(u => u.email.toLowerCase() === "cartup90@gmail.com");
+      if (hasOldAdmin || !hasNewAdmin) {
+        needUsersSeeding = true;
+      }
+    } catch {
+      needUsersSeeding = true;
+    }
+  }
+
+  if (needUsersSeeding) {
+    const defaultUsers = [
+      { email: "cartup90@gmail.com", role: "admin", password: "admin123" },
+      { email: "docente@ceija.edu.ar", role: "comun", password: "docente123" }
+    ];
+    localStorage.setItem("sisgest_users", JSON.stringify(defaultUsers));
+  }
+
   if (!localStorage.getItem(MOCK_STORAGE_KEYS.NEWS)) {
     localStorage.setItem(MOCK_STORAGE_KEYS.NEWS, JSON.stringify([
       {
@@ -137,17 +162,25 @@ export const login = async (email, password) => {
       role: role
     };
   } else {
-    // Simulated admin and common user login
-    const normalizedEmail = email.toLowerCase().strip ? email.toLowerCase().strip() : email.toLowerCase().trim();
-    let role = "comun";
-    if (normalizedEmail.includes("admin")) {
-      role = "admin";
+    // Simulated auth in Mock Mode
+    const normalizedEmail = email.toLowerCase().trim();
+    const users = JSON.parse(localStorage.getItem("sisgest_users") || "[]");
+    
+    const matchedUser = users.find(u => u.email.toLowerCase() === normalizedEmail);
+    if (!matchedUser) {
+      throw new Error("Usuario no registrado en el sistema.");
     }
+    
+    if (matchedUser.password !== password) {
+      throw new Error("Contraseña incorrecta. Verifique sus credenciales.");
+    }
+    
     const mockUser = {
-      uid: `mock_uid_${Date.now()}`,
-      email: normalizedEmail,
-      role: role
+      uid: matchedUser.uid || `mock_uid_${matchedUser.email}`,
+      email: matchedUser.email,
+      role: matchedUser.role
     };
+    
     localStorage.setItem(MOCK_STORAGE_KEYS.USER, JSON.stringify(mockUser));
     // Trigger simulated auth state change
     if (authChangeCallback) authChangeCallback(mockUser);
@@ -191,6 +224,63 @@ export const onAuthChange = (callback) => {
     }
     // Return unsubscribe mock
     return () => { authChangeCallback = null; };
+  }
+};
+
+export const createUser = async (email, password, role, usuarioEmail) => {
+  if (!isMock) {
+    const userRef = doc(db, "users", `uid_${email}`);
+    await setDoc(userRef, { email, role });
+    await addDoc(collection(db, "logs_auditoria"), {
+      timestamp: new Date().toISOString(),
+      usuario_email: usuarioEmail,
+      accion: "CREAR_USUARIO",
+      modulo: "CONFIGURACION",
+      descripcion: `Se registró el usuario ${email} con rol ${role}`
+    });
+  } else {
+    const users = JSON.parse(localStorage.getItem("sisgest_users") || "[]");
+    if (users.some(u => u.email.toLowerCase() === email.toLowerCase())) {
+      throw new Error("El usuario ya existe en el sistema.");
+    }
+    
+    users.push({
+      uid: `mock_uid_${Date.now()}`,
+      email: email.toLowerCase().trim(),
+      password: password,
+      role: role
+    });
+    localStorage.setItem("sisgest_users", JSON.stringify(users));
+    await addAuditLog(usuarioEmail, "CREAR_USUARIO", "CONFIGURACION", `Se registró el usuario ${email} con rol ${role}`);
+  }
+};
+
+export const changePassword = async (currentPassword, newPassword) => {
+  if (!isMock) {
+    const currentUser = auth.currentUser;
+    if (currentUser) {
+      await updatePassword(currentUser, newPassword);
+    } else {
+      throw new Error("No hay usuario autenticado.");
+    }
+  } else {
+    const cachedUser = JSON.parse(localStorage.getItem(MOCK_STORAGE_KEYS.USER));
+    if (cachedUser) {
+      const users = JSON.parse(localStorage.getItem("sisgest_users") || "[]");
+      const idx = users.findIndex(u => u.email.toLowerCase() === cachedUser.email.toLowerCase());
+      if (idx !== -1) {
+        if (users[idx].password !== currentPassword) {
+          throw new Error("La contraseña actual es incorrecta.");
+        }
+        users[idx].password = newPassword;
+        localStorage.setItem("sisgest_users", JSON.stringify(users));
+        await addAuditLog(cachedUser.email, "CONFIGURACION", "USUARIOS", "El usuario cambió su contraseña");
+      } else {
+        throw new Error("Usuario no encontrado en la base de datos simulada.");
+      }
+    } else {
+      throw new Error("No hay usuario autenticado.");
+    }
   }
 };
 

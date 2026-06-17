@@ -1,5 +1,4 @@
-// src/components/Sidebar.jsx
-import React from "react";
+import React, { useState } from "react";
 import { 
   Users, 
   GraduationCap, 
@@ -9,9 +8,14 @@ import {
   LogOut, 
   X,
   Database,
-  Globe
+  Globe,
+  Key,
+  Lock,
+  Eye,
+  EyeOff,
+  CheckCircle2
 } from "lucide-react";
-import { isMock } from "../firebase";
+import { isMock, changePassword } from "../firebase";
 
 export default function Sidebar({ 
   currentModule, 
@@ -22,6 +26,7 @@ export default function Sidebar({
   onClose,
   setViewMode
 }) {
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
   const role = user ? user.role : "public";
 
   // Navigation items based on role
@@ -214,6 +219,33 @@ export default function Sidebar({
             </div>
           )}
 
+          {user && (
+            <button
+              onClick={() => setShowPasswordModal(true)}
+              className="sidebar-logout-btn"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "0.85rem",
+                width: "100%",
+                padding: "0.55rem 1rem",
+                borderRadius: "var(--radius-sm)",
+                border: "1px dashed rgba(255,255,255,0.15)",
+                background: "rgba(255,255,255,0.03)",
+                cursor: "pointer",
+                fontFamily: "var(--font-family-sans)",
+                fontSize: "0.85rem",
+                fontWeight: 500,
+                color: "rgba(255,255,255,0.85)",
+                marginTop: "0.6rem",
+                justifyContent: "center"
+              }}
+            >
+              <Key size={14} />
+              <span>Cambiar Contraseña</span>
+            </button>
+          )}
+
           <button 
             onClick={onLogout}
             className="sidebar-logout-btn"
@@ -229,6 +261,7 @@ export default function Sidebar({
               fontFamily: "var(--font-family-sans)",
               fontSize: "0.95rem",
               fontWeight: 500,
+              marginTop: "0.5rem"
             }}
           >
             <LogOut size={18} />
@@ -236,6 +269,215 @@ export default function Sidebar({
           </button>
         </div>
       </aside>
+
+      <ChangePasswordModal 
+        isOpen={showPasswordModal} 
+        onClose={() => setShowPasswordModal(false)} 
+      />
     </>
+  );
+}
+
+function ChangePasswordModal({ isOpen, onClose }) {
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showCurrent, setShowCurrent] = useState(false);
+  const [showNew, setShowNew] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  if (!isOpen) return null;
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    setSuccess(false);
+
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      setError("Por favor, complete todos los campos.");
+      return;
+    }
+
+    if (newPassword.length < 6) {
+      setError("La nueva contraseña debe tener al menos 6 caracteres.");
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      setError("La nueva contraseña y su confirmación no coinciden.");
+      return;
+    }
+
+    if (currentPassword === newPassword) {
+      setError("La nueva contraseña debe ser diferente a la actual.");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await changePassword(currentPassword, newPassword);
+      setSuccess(true);
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+    } catch (err) {
+      setError(err.message || "Error al cambiar la contraseña.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div style={{
+      position: "fixed",
+      top: 0,
+      left: 0,
+      width: "100vw",
+      height: "100vh",
+      background: "rgba(10, 15, 30, 0.75)",
+      backdropFilter: "blur(8px)",
+      zIndex: 9999,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      padding: "1rem"
+    }}>
+      <div className="glass-card animate-fade-in" style={{
+        maxWidth: "420px",
+        width: "100%",
+        padding: "2rem",
+        display: "flex",
+        flexDirection: "column",
+        gap: "1.25rem",
+        border: "1px solid rgba(255, 255, 255, 0.1)",
+        boxShadow: "0 20px 50px rgba(0, 0, 0, 0.5)",
+        background: "var(--bg-secondary)",
+        borderRadius: "var(--radius-md)"
+      }}>
+        <div className="flex-between" style={{ borderBottom: "1px solid var(--border-glass)", paddingBottom: "0.75rem" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+            <Key size={20} style={{ color: "var(--color-ocre)" }} />
+            <h3 style={{ fontSize: "1.2rem", fontWeight: 800, color: "var(--text-main)" }}>
+              Cambiar Contraseña
+            </h3>
+          </div>
+          <button onClick={onClose} style={{ background: "none", border: "none", color: "var(--text-muted)", cursor: "pointer" }}>
+            <X size={18} />
+          </button>
+        </div>
+
+        {success ? (
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "1rem", textAlign: "center", padding: "1rem 0" }}>
+            <CheckCircle2 size={48} style={{ color: "var(--color-success)" }} />
+            <div>
+              <h4 style={{ color: "var(--text-main)", fontWeight: 700 }}>¡Contraseña Actualizada!</h4>
+              <p style={{ color: "var(--text-muted)", fontSize: "0.85rem", marginTop: "0.25rem" }}>
+                Tu contraseña se ha cambiado correctamente. Úsala para tus próximos accesos.
+              </p>
+            </div>
+            <button onClick={onClose} className="btn btn-primary" style={{ width: "100%", marginTop: "0.5rem" }}>
+              Cerrar
+            </button>
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+            {error && (
+              <div className="badge-error" style={{ padding: "0.6rem 0.8rem", borderRadius: "var(--radius-sm)", fontSize: "0.8rem", textTransform: "none", letterSpacing: "normal" }}>
+                {error}
+              </div>
+            )}
+
+            <div className="form-group">
+              <label className="form-label">Contraseña Actual</label>
+              <div style={{ position: "relative" }}>
+                <input 
+                  type={showCurrent ? "text" : "password"} 
+                  className="form-control"
+                  style={{ paddingRight: "2.5rem" }}
+                  placeholder="Contraseña actual"
+                  value={currentPassword}
+                  onChange={(e) => setCurrentPassword(e.target.value)}
+                  disabled={loading}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowCurrent(!showCurrent)}
+                  style={{ position: "absolute", right: "0.75rem", top: "50%", transform: "translateY(-50%)", background: "none", border: "none", color: "var(--text-muted)", cursor: "pointer" }}
+                >
+                  {showCurrent ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
+              </div>
+            </div>
+
+            <div className="form-group">
+              <label className="form-label">Nueva Contraseña (mín. 6 caracteres)</label>
+              <div style={{ position: "relative" }}>
+                <input 
+                  type={showNew ? "text" : "password"} 
+                  className="form-control"
+                  style={{ paddingRight: "2.5rem" }}
+                  placeholder="Nueva contraseña"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  disabled={loading}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowNew(!showNew)}
+                  style={{ position: "absolute", right: "0.75rem", top: "50%", transform: "translateY(-50%)", background: "none", border: "none", color: "var(--text-muted)", cursor: "pointer" }}
+                >
+                  {showNew ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
+              </div>
+            </div>
+
+            <div className="form-group">
+              <label className="form-label">Confirmar Nueva Contraseña</label>
+              <div style={{ position: "relative" }}>
+                <input 
+                  type={showConfirm ? "text" : "password"} 
+                  className="form-control"
+                  style={{ paddingRight: "2.5rem" }}
+                  placeholder="Confirmar contraseña"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  disabled={loading}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirm(!showConfirm)}
+                  style={{ position: "absolute", right: "0.75rem", top: "50%", transform: "translateY(-50%)", background: "none", border: "none", color: "var(--text-muted)", cursor: "pointer" }}
+                >
+                  {showConfirm ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
+              </div>
+            </div>
+
+            <div style={{ display: "flex", gap: "0.75rem", marginTop: "0.5rem" }}>
+              <button 
+                type="button" 
+                onClick={onClose} 
+                className="btn btn-secondary" 
+                style={{ flexGrow: 1 }}
+                disabled={loading}
+              >
+                Cancelar
+              </button>
+              <button 
+                type="submit" 
+                className="btn btn-primary" 
+                style={{ flexGrow: 1 }}
+                disabled={loading}
+              >
+                {loading ? "Guardando..." : "Guardar"}
+              </button>
+            </div>
+          </form>
+        )}
+      </div>
+    </div>
   );
 }

@@ -12,7 +12,7 @@ import {
   User,
   ShieldCheck
 } from "lucide-react";
-import { getAuditLogs, seedDatabase, isMock } from "../firebase";
+import { getAuditLogs, seedDatabase, isMock, createUser } from "../firebase";
 import { useDialog } from "../context/DialogContext";
 import seedData from "../../seed_data.json";
 
@@ -76,13 +76,19 @@ export default function ConfigModule({ user }) {
       return;
     }
     
-    // In demo mode we just simulate creating a user in local database logs
-    setUserSuccessMsg(`¡Usuario ${newUser.email} creado con éxito con rol ${newUser.role === "admin" ? "Administrador" : "Docente"}!`);
-    setNewUser({ email: "", password: "", role: "comun" });
-    
-    setTimeout(() => {
-      setUserSuccessMsg("");
-    }, 4000);
+    try {
+      await createUser(newUser.email, newUser.password, newUser.role, user.email);
+      setUserSuccessMsg(`¡Usuario ${newUser.email} creado con éxito con rol ${newUser.role === "admin" ? "Administrador" : "Docente"}!`);
+      setNewUser({ email: "", password: "", role: "comun" });
+      loadLogs();
+      
+      setTimeout(() => {
+        setUserSuccessMsg("");
+      }, 4000);
+    } catch (err) {
+      console.error(err);
+      await alert(err.message || "Error al crear el usuario.", "Error de Creación", "error");
+    }
   };
 
   const filteredLogs = logs.filter(log => 
