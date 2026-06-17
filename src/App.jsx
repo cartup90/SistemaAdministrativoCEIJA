@@ -1,6 +1,6 @@
 // src/App.jsx
 import React, { useState, useEffect } from "react";
-import { Menu, LogOut, Newspaper, Calendar, Search, FileText, X, LogIn, AlertTriangle, CheckCircle2, BookOpen, Sparkles, Trophy, Cpu, ChevronRight, LayoutDashboard } from "lucide-react";
+import { Menu, LogOut, Newspaper, Calendar, Search, FileText, X, LogIn, AlertTriangle, CheckCircle2, BookOpen, Sparkles, Trophy, Cpu, ChevronRight, LayoutDashboard, Clock, Award, MapPin, HelpCircle } from "lucide-react";
 import { onAuthChange, logout, getStudentPublicInfo, getSchedules } from "./firebase";
 import Auth from "./components/Auth";
 import Sidebar from "./components/Sidebar";
@@ -419,69 +419,133 @@ export default function App() {
             )}
           </div>
 
-          {/* Right Sidebar Column - DNI Consulta */}
+          {/* Right Sidebar Column - DNI Consulta & Info Escolar */}
           <div className="public-sidebar">
-            <div 
-              className="glass-card animate-fade-in" 
-              style={{ 
-                padding: "1.5rem", 
-                display: "flex", 
-                flexDirection: "column", 
-                gap: "1rem", 
-                position: "sticky", 
-                top: "6rem",
-                borderTop: "4px solid var(--color-ladrillo) !important" 
-              }}
-            >
-              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", borderBottom: "1px solid rgba(139,38,53,0.08)", paddingBottom: "0.5rem" }}>
-                <FileText size={20} style={{ color: "var(--color-ladrillo)" }} />
-                <h3 style={{ color: "var(--text-main)", fontSize: "1.1rem", fontWeight: 700 }}>Consulta de Legajo</h3>
-              </div>
-              <p style={{ color: "var(--text-muted)", fontSize: "0.8rem", lineHeight: 1.5 }}>
-                Verificá de manera segura tu checklist de documentación física y tus previas ingresando tu DNI.
-              </p>
-
-              <form 
-                onSubmit={handlePublicDniSearch} 
-                style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}
+            <div style={{ position: "sticky", top: "6rem", display: "flex", flexDirection: "column", gap: "1rem" }}>
+              {/* Consulta de Legajo Card */}
+              <div 
+                className="glass-card animate-fade-in" 
+                style={{ 
+                  padding: "1.5rem", 
+                  display: "flex", 
+                  flexDirection: "column", 
+                  gap: "1rem", 
+                  borderTop: "4px solid var(--color-ladrillo) !important" 
+                }}
               >
-                <div className="form-group" style={{ marginBottom: 0 }}>
-                  <label className="form-label" htmlFor="public_dni">Número de DNI</label>
-                  <div style={{ position: "relative" }}>
-                    <input 
-                      id="public_dni"
-                      type="text" 
-                      maxLength={8}
-                      className="form-control"
-                      placeholder="Ej. 45678901"
-                      value={dniQuery}
-                      onChange={(e) => {
-                        setDniQuery(e.target.value.replace(/\D/g, ""));
-                        setPublicSearchError("");
-                      }}
-                      disabled={publicSearchLoading}
-                      style={{ paddingLeft: "2.2rem", borderColor: "var(--border-glass)" }}
-                    />
-                    <Search size={14} style={{ position: "absolute", left: "0.8rem", top: "50%", transform: "translateY(-50%)", color: "var(--text-inactive)" }} />
+                <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", borderBottom: "1px solid rgba(139,38,53,0.08)", paddingBottom: "0.5rem" }}>
+                  <FileText size={20} style={{ color: "var(--color-ladrillo)" }} />
+                  <h3 style={{ color: "var(--text-main)", fontSize: "1.1rem", fontWeight: 700 }}>Consulta de Legajo</h3>
+                </div>
+                <p style={{ color: "var(--text-muted)", fontSize: "0.8rem", lineHeight: 1.5 }}>
+                  Verificá de manera segura tu checklist de documentación física y tus previas ingresando tu DNI.
+                </p>
+
+                <form 
+                  onSubmit={handlePublicDniSearch} 
+                  style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}
+                >
+                  <div className="form-group" style={{ marginBottom: 0 }}>
+                    <label className="form-label" htmlFor="public_dni">Número de DNI</label>
+                    <div style={{ position: "relative" }}>
+                      <input 
+                        id="public_dni"
+                        type="text" 
+                        maxLength={8}
+                        className="form-control"
+                        placeholder="Ej. 45678901"
+                        value={dniQuery}
+                        onChange={(e) => {
+                          setDniQuery(e.target.value.replace(/\D/g, ""));
+                          setPublicSearchError("");
+                        }}
+                        disabled={publicSearchLoading}
+                        style={{ paddingLeft: "2.2rem", borderColor: "var(--border-glass)" }}
+                      />
+                      <Search size={14} style={{ position: "absolute", left: "0.8rem", top: "50%", transform: "translateY(-50%)", color: "var(--text-inactive)" }} />
+                    </div>
+                  </div>
+
+                  {publicSearchError && (
+                    <div style={{ color: "var(--color-error)", fontSize: "0.75rem", display: "flex", alignItems: "center", gap: "0.25rem", textTransform: "none", letterSpacing: "normal" }}>
+                      <AlertTriangle size={12} style={{ flexShrink: 0 }} />
+                      <span>{publicSearchError}</span>
+                    </div>
+                  )}
+
+                  <button 
+                    type="submit" 
+                    className="btn btn-primary"
+                    style={{ width: "100%", padding: "0.6rem" }}
+                    disabled={publicSearchLoading || !dniQuery}
+                  >
+                    {publicSearchLoading ? "Buscando..." : "Consultar Legajo"}
+                  </button>
+                </form>
+              </div>
+
+              {/* Información Escolar Card */}
+              <div 
+                className="glass-card animate-fade-in" 
+                style={{ 
+                  padding: "1.5rem", 
+                  display: "flex", 
+                  flexDirection: "column", 
+                  gap: "1rem", 
+                  borderTop: "4px solid var(--color-ocre) !important" 
+                }}
+              >
+                <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", borderBottom: "1px solid rgba(244,180,26,0.15)", paddingBottom: "0.5rem" }}>
+                  <BookOpen size={20} style={{ color: "var(--color-ocre)" }} />
+                  <h3 style={{ color: "var(--text-main)", fontSize: "1.1rem", fontWeight: 700 }}>Información Escolar</h3>
+                </div>
+                
+                <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem", fontSize: "0.85rem", color: "var(--text-muted)" }}>
+                  {/* Horario */}
+                  <div style={{ display: "flex", gap: "0.5rem", alignItems: "flex-start" }}>
+                    <Clock size={16} style={{ color: "var(--color-ocre)", flexShrink: 0, marginTop: "0.1rem" }} />
+                    <div>
+                      <strong>Horario de cursado:</strong>
+                      <div style={{ color: "var(--text-main)", marginTop: "0.1rem" }}>Lunes a Viernes de 18:50 a 22:30 hs.</div>
+                    </div>
+                  </div>
+
+                  {/* Orientación */}
+                  <div style={{ display: "flex", gap: "0.5rem", alignItems: "flex-start" }}>
+                    <Award size={16} style={{ color: "var(--color-ocre)", flexShrink: 0, marginTop: "0.1rem" }} />
+                    <div>
+                      <strong>Orientación:</strong>
+                      <div style={{ color: "var(--text-main)", marginTop: "0.1rem" }}>Cs. Naturales</div>
+                    </div>
+                  </div>
+
+                  {/* Ubicación */}
+                  <div style={{ display: "flex", gap: "0.5rem", alignItems: "flex-start" }}>
+                    <MapPin size={16} style={{ color: "var(--color-ocre)", flexShrink: 0, marginTop: "0.1rem" }} />
+                    <div>
+                      <strong>Ubicación:</strong>
+                      <div style={{ marginTop: "0.1rem" }}>
+                        <a 
+                          href="https://maps.app.goo.gl/FMZ8o4wiXXR7h6LdA" 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          style={{ color: "var(--primary)", textDecoration: "underline", fontWeight: 600 }}
+                        >
+                          Ver en Google Maps
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Consultas */}
+                  <div style={{ display: "flex", gap: "0.5rem", alignItems: "flex-start", background: "rgba(244,180,26,0.06)", border: "1px dashed rgba(244,180,26,0.15)", padding: "0.6rem", borderRadius: "var(--radius-sm)", marginTop: "0.25rem" }}>
+                    <HelpCircle size={16} style={{ color: "var(--color-ocre)", flexShrink: 0, marginTop: "0.1rem" }} />
+                    <div style={{ fontSize: "0.8rem", color: "var(--text-main)", fontWeight: 500 }}>
+                      Para consultas, acercarse a la escuela.
+                    </div>
                   </div>
                 </div>
-
-                {publicSearchError && (
-                  <div style={{ color: "var(--color-error)", fontSize: "0.75rem", display: "flex", alignItems: "center", gap: "0.25rem", textTransform: "none", letterSpacing: "normal" }}>
-                    <AlertTriangle size={12} style={{ flexShrink: 0 }} />
-                    <span>{publicSearchError}</span>
-                  </div>
-                )}
-
-                <button 
-                  type="submit" 
-                  className="btn btn-primary"
-                  style={{ width: "100%", padding: "0.6rem" }}
-                  disabled={publicSearchLoading || !dniQuery}
-                >
-                  {publicSearchLoading ? "Buscando..." : "Consultar Legajo"}
-                </button>
-              </form>
+              </div>
             </div>
           </div>
         </div>
@@ -601,7 +665,7 @@ export default function App() {
           </div>
           <div style={{ padding: "2rem max(1rem, 5%)", textAlign: "center", fontSize: "0.85rem", color: "var(--text-muted)" }}>
             <p style={{ fontWeight: 700, color: "var(--text-main)" }}>CEIJA Nº12 "Remedios Escalada de San Martín" Anexo Bº Alberdi</p>
-            <p style={{ fontSize: "0.75rem", marginTop: "0.35rem" }}>© 2026 Sistema de Gestión Administrativa SisGest. Diseñado con identidad comunitaria local. Programador: Catriel Pardo.</p>
+            <p style={{ fontSize: "0.75rem", marginTop: "0.35rem" }}>© 2026 Sistema de Gestión Administrativa SisGest. Diseñado por Catriel Pardo.</p>
           </div>
         </footer>
 
