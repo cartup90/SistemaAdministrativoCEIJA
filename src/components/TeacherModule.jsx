@@ -9,8 +9,10 @@ import {
   Eye as EyeIcon,
   X as XIcon,
   GraduationCap as GradIcon,
-  Folder as FolderIcon
+  Folder as FolderIcon,
+  Download as DownloadIcon
 } from "lucide-react";
+import * as XLSX from "xlsx";
 import { getTeachers, saveTeacher, deleteTeacher } from "../firebase";
 import { useDialog } from "../context/DialogContext";
 
@@ -175,6 +177,40 @@ export default function TeacherModule({ user }) {
     return dateString;
   };
 
+  // Export to Excel
+  const handleExport = () => {
+    const dataToExport = teachers.map(t => {
+      const row = {
+        "DNI": t.dni,
+        "Apellido": t.apellido,
+        "Nombre": t.nombre,
+        "Teléfono": t.telefono || "",
+        "Correo": t.correo || "",
+        "Domicilio": t.domicilio || "",
+        "Designación": t.designacion,
+        "Estado": t.estado,
+        "Área Curricular": t.area || "Sin asignar",
+        "Años que dicta": t.anos_dicta ? t.anos_dicta.join(", ") : "",
+        "Materias": t.materias ? t.materias.join(", ") : "",
+        "Folio": t.folio || "",
+        "Título": t.documentos?.titulo || "Pendiente",
+        "Incompatibilidad": t.documentos?.incompatibilidad || "Pendiente",
+        "Servicios": t.documentos?.servicios || "Pendiente",
+        "Delitos Sexuales": t.documentos?.delitos_sexuales || "Pendiente",
+        "Observaciones": t.observaciones || ""
+      };
+      if (t.designacion !== "Titular" && t.fecha_baja) {
+        row["Fecha Baja"] = formatDate(t.fecha_baja);
+      }
+      return row;
+    });
+
+    const worksheet = XLSX.utils.json_to_sheet(dataToExport);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Profesores");
+    XLSX.writeFile(workbook, `SisGest_Profesores_${new Date().toISOString().split("T")[0]}.xlsx`);
+  };
+
   // Check if documents are complete
   const isDocComplete = (teacher) => {
     if (!teacher.documentos) return false;
@@ -200,12 +236,19 @@ export default function TeacherModule({ user }) {
           </p>
         </div>
         
-        {isAdmin && (
-          <button onClick={handleOpenAdd} className="btn btn-primary">
-            <PlusIcon size={16} />
-            <span>Nuevo Profesor</span>
+        <div style={{ display: "flex", gap: "0.75rem" }}>
+          <button onClick={handleExport} className="btn btn-secondary">
+            <DownloadIcon size={16} />
+            <span>Exportar Excel</span>
           </button>
-        )}
+          
+          {isAdmin && (
+            <button onClick={handleOpenAdd} className="btn btn-primary">
+              <PlusIcon size={16} />
+              <span>Nuevo Profesor</span>
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Filters Card */}
