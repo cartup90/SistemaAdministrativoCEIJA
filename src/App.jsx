@@ -1,6 +1,6 @@
 // src/App.jsx
 import React, { useState, useEffect } from "react";
-import { Menu, LogOut, Newspaper, Calendar, Search, FileText, X, LogIn, AlertTriangle, CheckCircle2, BookOpen, Sparkles, Trophy, Cpu, ChevronRight } from "lucide-react";
+import { Menu, LogOut, Newspaper, Calendar, Search, FileText, X, LogIn, AlertTriangle, CheckCircle2, BookOpen, Sparkles, Trophy, Cpu, ChevronRight, LayoutDashboard } from "lucide-react";
 import { onAuthChange, logout, getStudentPublicInfo, getSchedules } from "./firebase";
 import Auth from "./components/Auth";
 import Sidebar from "./components/Sidebar";
@@ -34,6 +34,10 @@ export default function App() {
   const [lightboxTitle, setLightboxTitle] = useState("");
   const [schedules, setSchedules] = useState([]);
 
+  // Session view mode: "panel" (admin panel) or "public" (public portal)
+  const [viewMode, setViewMode] = useState("panel");
+  const [sessionExpiredAlert, setSessionExpiredAlert] = useState(false);
+
   useEffect(() => {
     const fetchSchedules = async () => {
       try {
@@ -55,6 +59,7 @@ export default function App() {
       // Auto-route based on roles when logging in
       if (currentUser) {
         setShowLogin(false);
+        setViewMode("panel"); // Ensure we route to panel when logging in
         if (currentUser.role === "admin" || currentUser.role === "comun") {
           setCurrentModule("students");
         } else {
@@ -74,7 +79,61 @@ export default function App() {
     await logout();
     setUser(null);
     setShowLogin(false);
+    localStorage.removeItem("sisgest_last_activity");
   };
+
+  // Validate session activity on mount to catch expired sessions after page refresh
+  useEffect(() => {
+    const INACTIVITY_LIMIT = 30 * 60 * 1000; // 30 minutes in ms
+    const lastActivity = parseInt(localStorage.getItem("sisgest_last_activity") || "0", 10);
+    const hasSession = localStorage.getItem("sisgest_user"); // for mock mode
+    
+    if (hasSession && lastActivity && Date.now() - lastActivity > INACTIVITY_LIMIT) {
+      // Session has expired while user was away. Clear it.
+      localStorage.removeItem("sisgest_user");
+      localStorage.removeItem("sisgest_last_activity");
+      setSessionExpiredAlert(true);
+      setUser(null);
+    }
+  }, []);
+
+  // Monitor activity when user is logged in
+  useEffect(() => {
+    if (!user) return;
+
+    const INACTIVITY_LIMIT = 30 * 60 * 1000; // 30 minutes in ms
+    const ACTIVITY_KEY = "sisgest_last_activity";
+
+    // Set initial activity timestamp
+    localStorage.setItem(ACTIVITY_KEY, Date.now().toString());
+
+    const updateActivity = () => {
+      localStorage.setItem(ACTIVITY_KEY, Date.now().toString());
+    };
+
+    // Events that count as user activity
+    const events = ["mousemove", "mousedown", "keypress", "scroll", "touchstart"];
+    
+    events.forEach((event) => {
+      window.addEventListener(event, updateActivity);
+    });
+
+    // Check every 10 seconds if user has been inactive for > 30 minutes
+    const interval = setInterval(() => {
+      const lastActivity = parseInt(localStorage.getItem(ACTIVITY_KEY) || "0", 10);
+      if (Date.now() - lastActivity > INACTIVITY_LIMIT) {
+        handleLogout();
+        setSessionExpiredAlert(true);
+      }
+    }, 10000);
+
+    return () => {
+      events.forEach((event) => {
+        window.removeEventListener(event, updateActivity);
+      });
+      clearInterval(interval);
+    };
+  }, [user]);
 
   const handlePublicDniSearch = async (e) => {
     e.preventDefault();
@@ -131,14 +190,15 @@ export default function App() {
     );
   }
 
-  // 1. UNAUTHENTICATED PUBLIC PORTAL OR LOGIN VIEW
-  if (!user) {
+  // 1. UNAUTHENTICATED PUBLIC PORTAL OR LOGIN VIEW (OR VIEWING PORTAL WHILE LOGGED IN)
+  if (!user || viewMode === "public") {
     if (showLogin) {
       return (
         <Auth 
           onLoginSuccess={(loggedInUser) => {
             setUser(loggedInUser);
             setShowLogin(false);
+            setViewMode("panel");
           }}
           onBackToPublic={() => setShowLogin(false)}
         />
@@ -186,14 +246,25 @@ export default function App() {
               <Calendar size={16} />
               <span className="hide-mobile" style={{ marginLeft: "0.25rem" }}>Horarios</span>
             </button>
-            <button
-              onClick={() => setShowLogin(true)}
-              className="btn btn-secondary"
-              style={{ padding: "0.5rem 1rem", fontSize: "0.85rem", marginLeft: "0.5rem", border: "1px solid var(--primary)", color: "var(--primary)" }}
-            >
-              <LogIn size={16} />
-              <span style={{ marginLeft: "0.25rem" }}>Acceso Personal</span>
-            </button>
+            {user ? (
+              <button
+                onClick={() => setViewMode("panel")}
+                className="btn btn-primary"
+                style={{ padding: "0.5rem 1rem", fontSize: "0.85rem", marginLeft: "0.5rem" }}
+              >
+                <LayoutDashboard size={16} />
+                <span style={{ marginLeft: "0.25rem" }}>Volver al Panel</span>
+              </button>
+            ) : (
+              <button
+                onClick={() => setShowLogin(true)}
+                className="btn btn-secondary"
+                style={{ padding: "0.5rem 1rem", fontSize: "0.85rem", marginLeft: "0.5rem", border: "1px solid var(--primary)", color: "var(--primary)" }}
+              >
+                <LogIn size={16} />
+                <span style={{ marginLeft: "0.25rem" }}>Acceso Personal</span>
+              </button>
+            )}
           </div>
         </header>
 
@@ -795,6 +866,7 @@ export default function App() {
             </div>
           </div>
         )}
+        <SessionExpiredModal isOpen={sessionExpiredAlert} onClose={() => setSessionExpiredAlert(false)} />
       </div>
     );
   }
@@ -841,6 +913,7 @@ export default function App() {
         onLogout={handleLogout}
         isOpen={isMobileSidebarOpen}
         onClose={() => setIsMobileSidebarOpen(false)}
+        setViewMode={setViewMode}
       />
 
       {/* Main Module Content Container */}
@@ -851,6 +924,7 @@ export default function App() {
         {currentModule === "news" && <NewsModule user={user} />}
         {currentModule === "config" && <ConfigModule user={user} />}
       </main>
+      <SessionExpiredModal isOpen={sessionExpiredAlert} onClose={() => setSessionExpiredAlert(false)} />
     </div>
   );
 }
@@ -908,3 +982,58 @@ const publicDocCheckStyle = (status) => {
     fontSize: "0.8rem"
   };
 };
+
+function SessionExpiredModal({ isOpen, onClose }) {
+  if (!isOpen) return null;
+  return (
+    <div style={{
+      position: "fixed",
+      top: 0,
+      left: 0,
+      width: "100vw",
+      height: "100vh",
+      background: "rgba(10, 15, 30, 0.8)",
+      backdropFilter: "blur(12px)",
+      zIndex: 9999,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      padding: "1rem"
+    }}>
+      <div className="glass-card animate-fade-in" style={{
+        maxWidth: "400px",
+        width: "100%",
+        padding: "2.5rem 2rem",
+        textAlign: "center",
+        border: "1px solid rgba(255, 255, 255, 0.1)",
+        boxShadow: "0 20px 50px rgba(0,0,0,0.5)",
+        background: "var(--bg-secondary)",
+        borderRadius: "var(--radius-md)"
+      }}>
+        <div style={{
+          display: "inline-flex",
+          padding: "1rem",
+          borderRadius: "50%",
+          background: "rgba(244, 180, 26, 0.1)",
+          color: "var(--color-ocre)",
+          marginBottom: "1.25rem"
+        }}>
+          <AlertTriangle size={32} />
+        </div>
+        <h3 style={{ fontSize: "1.3rem", color: "var(--text-main)", marginBottom: "0.75rem", fontWeight: 800 }}>
+          Sesión Expirada
+        </h3>
+        <p style={{ fontSize: "0.9rem", color: "var(--text-muted)", marginBottom: "1.75rem", lineHeight: 1.6 }}>
+          Tu sesión se ha cerrado automáticamente debido a 30 minutos de inactividad para proteger tu información de acceso.
+        </p>
+        <button 
+          onClick={onClose}
+          className="btn btn-primary"
+          style={{ width: "100%", padding: "0.75rem", fontWeight: 700 }}
+        >
+          Entendido
+        </button>
+      </div>
+    </div>
+  );
+}

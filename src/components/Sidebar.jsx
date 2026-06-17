@@ -8,7 +8,8 @@ import {
   Settings, 
   LogOut, 
   X,
-  Database
+  Database,
+  Globe
 } from "lucide-react";
 import { isMock } from "../firebase";
 
@@ -18,7 +19,8 @@ export default function Sidebar({
   user, 
   onLogout, 
   isOpen, 
-  onClose 
+  onClose,
+  setViewMode
 }) {
   const role = user ? user.role : "public";
 
@@ -139,6 +141,22 @@ export default function Sidebar({
 
         {/* Menu Items */}
         <nav style={{ display: "flex", flexDirection: "column", gap: "0.5rem", flexGrow: 1 }}>
+          <button
+            onClick={() => {
+              setViewMode("public");
+              onClose();
+            }}
+            className="sidebar-btn"
+            style={{ 
+              border: "1px dashed rgba(244, 180, 26, 0.3)",
+              background: "rgba(244, 180, 26, 0.04)",
+              marginBottom: "0.5rem"
+            }}
+          >
+            <Globe size={18} style={{ color: "var(--color-ocre)" }} />
+            <span style={{ fontWeight: 700, color: "var(--color-ocre)" }}>Ver Portal Público</span>
+          </button>
+
           {menuItems.map((item) => {
             const Icon = item.icon;
             const isActive = currentModule === item.id;
