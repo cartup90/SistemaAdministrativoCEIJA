@@ -75,17 +75,25 @@ const MOCK_STORAGE_KEYS = {
   USER: "sisgest_user"
 };
 
+import seedData from "../seed_data.json";
+
 const initializeMockData = () => {
-  // If local storage is empty, we will let it be seeded from seed_data.json
-  if (!localStorage.getItem(MOCK_STORAGE_KEYS.STUDENTS)) {
-    localStorage.setItem(MOCK_STORAGE_KEYS.STUDENTS, JSON.stringify([]));
+  // If local storage is empty or empty array, seed it automatically from seed_data.json
+  const currentStudents = localStorage.getItem(MOCK_STORAGE_KEYS.STUDENTS);
+  if (!currentStudents || JSON.parse(currentStudents).length === 0) {
+    localStorage.setItem(MOCK_STORAGE_KEYS.STUDENTS, JSON.stringify(seedData.estudiantes || []));
   }
-  if (!localStorage.getItem(MOCK_STORAGE_KEYS.TEACHERS)) {
-    localStorage.setItem(MOCK_STORAGE_KEYS.TEACHERS, JSON.stringify([]));
+  
+  const currentTeachers = localStorage.getItem(MOCK_STORAGE_KEYS.TEACHERS);
+  if (!currentTeachers || JSON.parse(currentTeachers).length === 0) {
+    localStorage.setItem(MOCK_STORAGE_KEYS.TEACHERS, JSON.stringify(seedData.profesores || []));
   }
-  if (!localStorage.getItem(MOCK_STORAGE_KEYS.SCHEDULES)) {
-    localStorage.setItem(MOCK_STORAGE_KEYS.SCHEDULES, JSON.stringify([]));
+  
+  const currentSchedules = localStorage.getItem(MOCK_STORAGE_KEYS.SCHEDULES);
+  if (!currentSchedules || JSON.parse(currentSchedules).length === 0) {
+    localStorage.setItem(MOCK_STORAGE_KEYS.SCHEDULES, JSON.stringify(seedData.horarios || []));
   }
+
   if (!localStorage.getItem(MOCK_STORAGE_KEYS.NEWS)) {
     localStorage.setItem(MOCK_STORAGE_KEYS.NEWS, JSON.stringify([
       {
