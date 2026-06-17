@@ -1,6 +1,6 @@
 // src/App.jsx
 import React, { useState, useEffect } from "react";
-import { Menu, LogOut, Newspaper, Calendar, Search, FileText, X, LogIn, AlertTriangle, CheckCircle2, BookOpen, Sparkles, Trophy, Cpu, ChevronRight, LayoutDashboard, Clock, Award, MapPin, HelpCircle } from "lucide-react";
+import { Menu, LogOut, Newspaper, Calendar, Search, FileText, X, LogIn, AlertTriangle, CheckCircle2, BookOpen, Sparkles, Trophy, Cpu, ChevronRight, LayoutDashboard, Clock, Award, MapPin, HelpCircle, ChevronDown, Users } from "lucide-react";
 import { onAuthChange, logout, getStudentPublicInfo, getSchedules } from "./firebase";
 import Auth from "./components/Auth";
 import Sidebar from "./components/Sidebar";
@@ -246,6 +246,14 @@ export default function App() {
               <Calendar size={16} />
               <span className="hide-mobile" style={{ marginLeft: "0.25rem" }}>Horarios</span>
             </button>
+            <button
+              onClick={() => setActivePublicTab("faq")}
+              className={`btn ${activePublicTab === "faq" ? "btn-primary" : "btn-secondary"}`}
+              style={{ padding: "0.5rem 1rem", fontSize: "0.85rem" }}
+            >
+              <HelpCircle size={16} />
+              <span className="hide-mobile" style={{ marginLeft: "0.25rem" }}>Preguntas Frecuentes</span>
+            </button>
             {user ? (
               <button
                 onClick={() => setViewMode("panel")}
@@ -412,11 +420,9 @@ export default function App() {
 
           {/* Left/Main Content Column */}
           <div className="public-content">
-            {activePublicTab === "news" ? (
-              <NewsModule user={null} />
-            ) : (
-              <ScheduleModule user={null} isPublic={true} />
-            )}
+            {activePublicTab === "news" && <NewsModule user={null} />}
+            {activePublicTab === "schedules" && <ScheduleModule user={null} isPublic={true} />}
+            {activePublicTab === "faq" && <FAQPublicView />}
           </div>
 
           {/* Right Sidebar Column - DNI Consulta & Info Escolar */}
@@ -591,13 +597,23 @@ export default function App() {
                   <p><strong>• ¿Qué necesito para anotarme?</strong> Se requiere fotocopia de DNI, constancia de CUIL, certificado de estudios anteriores (primaria o analítico parcial) y C.U.S.</p>
                   <p><strong>• ¿Quién puede ingresar al secundario de adultos y con qué edad?</strong> Pueden ingresar jóvenes y adultos a partir de los 18 años de edad que no hayan completado el nivel secundario.</p>
                   <p style={{ fontSize: "0.8rem", color: "var(--text-inactive)", fontStyle: "italic", marginTop: "0.25rem" }}>
-                    * Esta sección de consultas está en desarrollo y los accesos aún no redirigen a ningún lado.
+                    * Explorá las dudas administrativas más comunes en nuestra sección de preguntas frecuentes.
                   </p>
                 </div>
               </div>
             </div>
             
-            <button className="btn btn-secondary" disabled style={{ opacity: 0.6, cursor: "not-allowed" }}>
+            <button 
+              onClick={() => {
+                setActivePublicTab("faq");
+                setTimeout(() => {
+                  const el = document.getElementById("public-navigation");
+                  if (el) el.scrollIntoView({ behavior: "smooth" });
+                }, 100);
+              }}
+              className="btn btn-secondary" 
+              style={{ border: "1px solid var(--color-ocre)", color: "var(--color-ladrillo)", fontWeight: 700 }}
+            >
               <span>Consultar Preguntas Frecuentes</span>
             </button>
           </section>
@@ -1098,6 +1114,272 @@ function SessionExpiredModal({ isOpen, onClose }) {
           Entendido
         </button>
       </div>
+    </div>
+  );
+}
+
+// ============================================================================
+// PUBLIC FAQ MODULE & DATA
+// ============================================================================
+
+const faqData = [
+  {
+    category: "Información General de la Escuela",
+    icon: Sparkles,
+    items: [
+      {
+        id: "gen_1",
+        question: "¿La escuela es pública o privada? ¿Hay que pagar cuota?",
+        answer: "Nuestra institución es una escuela secundaria de gestión pública y totalmente gratuita."
+      },
+      {
+        id: "gen_2",
+        question: "¿Cuál es la modalidad de estudio? ¿Se puede cursar a distancia?",
+        answer: "La modalidad de la escuela es estrictamente presencial. Cumplir con la asistencia es un requisito fundamental para poder certificar la regularidad como estudiante."
+      }
+    ]
+  },
+  {
+    category: "Requisitos de Ingreso y Edad",
+    icon: Users,
+    items: [
+      {
+        id: "req_1",
+        question: "¿Cuáles son los requisitos de edad para poder inscribirme?",
+        answer: "El requisito general es ser mayor de 18 años. Sin embargo, existe una excepción para los jóvenes de 17 años: pueden ingresar si cumplen los 18 años antes del 1 de enero del año siguiente (es decir, si aún no los han cumplido durante el año en curso)."
+      },
+      {
+        id: "req_2",
+        question: "Tengo 16 años, ¿puedo anotarme en la escuela?",
+        answer: "No, la edad mínima de ingreso es de 18 años (o 17 bajo la condición de cumplir los 18 antes del 1 de enero del año entrante). No existen excepciones para edades menores."
+      },
+      {
+        id: "req_3",
+        question: "¿Es obligatorio tener la primaria completa?",
+        answer: "Sí, es un requisito necesario tener la escolaridad primaria terminada."
+      },
+      {
+        id: "req_4",
+        question: "No terminé la primaria, ¿puedo estudiar en el CEIJA?",
+        answer: "Para ingresar al secundario debes haber concluido la primaria. Si no la terminaste, te invitamos a que nos consultes directamente para que te informemos y orientemos sobre cómo realizarla y completarla."
+      }
+    ]
+  },
+  {
+    category: "Inscripción y Documentación",
+    icon: FileText,
+    items: [
+      {
+        id: "doc_1",
+        question: "¿Qué papeles necesito presentar para la inscripción inicial?",
+        answer: "Para iniciar el proceso de inscripción es necesario que traigas la fotocopia de tu DNI."
+      },
+      {
+        id: "doc_2",
+        question: "¿Cuál es la documentación completa obligatoria que debo entregar?",
+        answer: "Para conformar el legajo definitivo, la documentación necesaria y obligatoria es:\n\n• DNI original y fotocopia.\n• Certificado Único de Salud (CUS).\n• Certificado de estudios anteriores (ya sea el certificado de la primaria terminada o el pase de otra escuela secundaria).\n\nEs importante destacar que no se contemplan excepciones en la entrega de estos requisitos documentales."
+      }
+    ]
+  },
+  {
+    category: "Duración, Equivalencias y Planes de Estudio",
+    icon: Calendar,
+    items: [
+      {
+        id: "plan_1",
+        question: "¿Cuántos años dura el secundario en el CEIJA?",
+        answer: "El cursado completo se realiza en 3 años."
+      },
+      {
+        id: "plan_2",
+        question: "¿Cómo se estructuran los años de cursado respecto a la secundaria común?",
+        answer: "Nuestra estructura es la siguiente:\n\n• 1er Año (Ciclo Básico): Equivale a los primeros 3 años de la secundaria común.\n• 2do Año: Equivale al 4to año de la secundaria común.\n• 3er Año (Ciclo Orientado): Equivale al 5to y 6to año de la secundaria común."
+      },
+      {
+        id: "plan_3",
+        question: "Hice un tiempo de secundaria común pero aprobé menos de 3 años, ¿en qué año ingreso?",
+        answer: "Si en tu escuela anterior aprobaste menos de los primeros 3 años, te corresponde ingresar directamente a nuestro 1er año."
+      },
+      {
+        id: "plan_4",
+        question: "¿Qué necesito para ingresar directamente a 2do año?",
+        answer: "Para ingresar a 2do año debes haber aprobado los primeros 3 años de la secundaria común y no adeudar (llevarte) más de 2 materias. Además, es obligatorio presentar el pase provisorio de manera obligatoria para certificarlo."
+      },
+      {
+        id: "plan_5",
+        question: "¿Qué necesito para ingresar directamente a 3er año?",
+        answer: "Para ingresar a 3er año debes haber completado el 4to año de la secundaria común y no adeudar (llevarte) más de 2 materias. Al igual que en el caso anterior, la presentación del pase provisorio es obligatoria."
+      },
+      {
+        id: "plan_6",
+        question: "¿Qué son las \"Equivalencias\" y por qué tendría que rendirlas?",
+        answer: "Cuando ingresas con un pase de otra escuela, los planes de estudio suelen ser diferentes. Por este motivo, para nivelar los contenidos, es necesario rendir algunas materias específicas de los años anteriores de nuestra institución, las cuales denominamos Equivalencias."
+      },
+      {
+        id: "plan_7",
+        question: "Voy a ingresar a 2do año con pase, ¿debo rendir equivalencias?",
+        answer: "Por lo general, los estudiantes que ingresan a 2do año con pase de otra institución no deben rendir equivalencias, a menos que provengan de un plan de estudios antiguo."
+      },
+      {
+        id: "plan_8",
+        question: "Voy a ingresar a 3er año con pase, ¿qué materias de equivalencia debo rendir?",
+        answer: "Por lo general, los estudiantes que ingresan en el 3er año deben rendir 4 materias correspondientes a nuestro segundo año:\n\n• Derecho del Trabajo y de la Seguridad Social.\n• Problemáticas Económicas Actuales.\n• Ciencia, Sociedad y Desarrollo.\n• Psicología Social."
+      },
+      {
+        id: "plan_9",
+        question: "¿Me puedo inscribir a 2do o 3er año debiendo más de 2 materias del colegio anterior?",
+        answer: "No, el límite máximo para el ingreso regular al año correspondiente con el pase es de hasta 2 materias adeudadas."
+      }
+    ]
+  }
+];
+
+function FAQPublicView() {
+  const [faqSearch, setFaqSearch] = useState("");
+  const [openFaq, setOpenFaq] = useState({});
+
+  const toggleFaq = (id) => {
+    setOpenFaq(prev => ({
+      ...prev,
+      [id]: !prev[id]
+    }));
+  };
+
+  const filteredFaq = faqData.map(category => {
+    const items = category.items.filter(item => 
+      item.question.toLowerCase().includes(faqSearch.toLowerCase()) || 
+      item.answer.toLowerCase().includes(faqSearch.toLowerCase())
+    );
+    return { ...category, items };
+  }).filter(category => category.items.length > 0);
+
+  return (
+    <div className="glass-card animate-fade-in" style={{ padding: "2rem" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", borderBottom: "2px solid var(--color-ocre)", paddingBottom: "0.75rem", marginBottom: "1.5rem" }}>
+        <HelpCircle size={28} style={{ color: "var(--color-ladrillo)" }} />
+        <div>
+          <h2 style={{ fontFamily: "var(--font-family-title)", fontSize: "1.6rem", fontWeight: 800, color: "var(--text-main)" }}>
+            Preguntas Frecuentes
+          </h2>
+          <p style={{ fontSize: "0.85rem", color: "var(--text-muted)", fontWeight: 500 }}>
+            Respuestas rápidas a las consultas administrativas y académicas más comunes
+          </p>
+        </div>
+      </div>
+
+      {/* FAQ Search Bar */}
+      <div style={{ marginBottom: "2rem", position: "relative" }}>
+        <input 
+          type="text"
+          className="form-control"
+          placeholder="Buscar pregunta o tema (ej. equivalencias, edad, inscripción)..."
+          value={faqSearch}
+          onChange={(e) => setFaqSearch(e.target.value)}
+          style={{ paddingLeft: "2.5rem", height: "3rem", fontSize: "0.95rem", borderRadius: "var(--radius-md)" }}
+        />
+        <Search size={18} style={{ position: "absolute", left: "0.9rem", top: "50%", transform: "translateY(-50%)", color: "var(--text-inactive)" }} />
+        {faqSearch && (
+          <button 
+            onClick={() => setFaqSearch("")}
+            style={{ position: "absolute", right: "0.9rem", top: "50%", transform: "translateY(-50%)", background: "none", border: "none", color: "var(--text-inactive)", cursor: "pointer" }}
+          >
+            <X size={16} />
+          </button>
+        )}
+      </div>
+
+      {/* FAQ List */}
+      {filteredFaq.length === 0 ? (
+        <div style={{ textAlign: "center", padding: "3rem 1rem", color: "var(--text-muted)" }}>
+          <HelpCircle size={40} style={{ color: "var(--text-inactive)", marginBottom: "1rem", opacity: 0.5 }} />
+          <p style={{ fontWeight: 600 }}>No encontramos respuestas que coincidan con tu búsqueda.</p>
+          <p style={{ fontSize: "0.85rem", marginTop: "0.25rem" }}>Prueba con otras palabras clave o acércate a la institución.</p>
+        </div>
+      ) : (
+        <div style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
+          {filteredFaq.map((cat, catIdx) => {
+            const CatIcon = cat.icon;
+            return (
+              <div key={catIdx} style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+                <h3 style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "1.15rem", color: "var(--color-ladrillo)", fontWeight: 700, paddingBottom: "0.35rem", borderBottom: "1px solid rgba(139, 38, 53, 0.1)" }}>
+                  <CatIcon size={18} />
+                  <span>{cat.category}</span>
+                </h3>
+                
+                <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+                  {cat.items.map((item) => {
+                    const isOpen = !!openFaq[item.id];
+                    return (
+                      <div 
+                        key={item.id}
+                        style={{
+                          border: "1px solid var(--border-glass)",
+                          borderRadius: "var(--radius-sm)",
+                          background: "rgba(255, 255, 255, 0.02)",
+                          overflow: "hidden",
+                          transition: "all 0.2s ease"
+                        }}
+                      >
+                        <button
+                          onClick={() => toggleFaq(item.id)}
+                          style={{
+                            width: "100%",
+                            padding: "1rem 1.25rem",
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                            background: "none",
+                            border: "none",
+                            cursor: "pointer",
+                            textAlign: "left",
+                            gap: "1rem"
+                          }}
+                        >
+                          <span style={{ fontWeight: 600, color: isOpen ? "var(--color-ocre)" : "var(--text-main)", fontSize: "0.95rem", lineHeight: 1.4, transition: "color 0.2s ease" }}>
+                            {item.question}
+                          </span>
+                          <span style={{ 
+                            transform: isOpen ? "rotate(180deg)" : "rotate(0deg)", 
+                            transition: "transform 0.2s ease",
+                            color: "var(--text-inactive)",
+                            flexShrink: 0
+                          }}>
+                            <ChevronDown size={18} />
+                          </span>
+                        </button>
+                        
+                        {isOpen && (
+                          <div 
+                            style={{
+                              padding: "0 1.25rem 1.25rem",
+                              color: "var(--text-muted)",
+                              fontSize: "0.9rem",
+                              lineHeight: 1.6,
+                              whiteSpace: "pre-line",
+                              borderTop: "1px solid rgba(255, 255, 255, 0.04)",
+                              paddingTop: "1rem",
+                              animation: "slideDown 0.2s ease-out"
+                            }}
+                          >
+                            {item.answer}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      <style dangerouslySetInnerHTML={{__html: `
+        @keyframes slideDown {
+          from { opacity: 0; transform: translateY(-4px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      `}} />
     </div>
   );
 }
