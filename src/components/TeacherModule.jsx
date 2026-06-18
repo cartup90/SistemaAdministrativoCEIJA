@@ -208,7 +208,7 @@ export default function TeacherModule({ user }) {
     const worksheet = XLSX.utils.json_to_sheet(dataToExport);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Profesores");
-    XLSX.writeFile(workbook, `SisGest_Profesores_${new Date().toISOString().split("T")[0]}.xlsx`);
+    XLSX.writeFile(workbook, `SistemaInstitucional_Profesores_${new Date().toISOString().split("T")[0]}.xlsx`);
   };
 
   // Check if documents are complete

@@ -187,7 +187,7 @@ export default function App() {
         <style dangerouslySetInnerHTML={{__html: `
           @keyframes spin { to { transform: rotate(360deg); } }
         `}} />
-        <span style={{ color: "var(--text-muted)", fontSize: "0.95rem" }}>Cargando SisGest...</span>
+        <span style={{ color: "var(--text-muted)", fontSize: "0.95rem" }}>Cargando Sistema Institucional...</span>
       </div>
     );
   }
@@ -224,7 +224,7 @@ export default function App() {
         >
           <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
             <h1 style={{ fontFamily: "var(--font-family-title)", fontSize: "1.3rem", fontWeight: 800, color: "var(--text-main)" }}>
-              SisGest
+              Sistema Institucional
             </h1>
             <span style={{ fontSize: "0.75rem", color: "var(--text-muted)", background: "rgba(139, 38, 53, 0.05)", padding: "0.2rem 0.5rem", borderRadius: "var(--radius-sm)", fontWeight: 600 }}>
               CEIJA Nº12 "Remedios Escalada de San Martín" Anexo Bº Alberdi
@@ -692,7 +692,7 @@ export default function App() {
           </div>
           <div style={{ padding: "2rem max(1rem, 5%)", textAlign: "center", fontSize: "0.85rem", color: "var(--text-muted)" }}>
             <p style={{ fontWeight: 700, color: "var(--text-main)" }}>CEIJA Nº12 "Remedios Escalada de San Martín" Anexo Bº Alberdi</p>
-            <p style={{ fontSize: "0.75rem", marginTop: "0.35rem" }}>© 2026 Sistema de Gestión Administrativa SisGest. Diseñado por Catriel Pardo.</p>
+            <p style={{ fontSize: "0.75rem", marginTop: "0.35rem" }}>© 2026 Sistema de Gestión Administrativa (Sistema Institucional). Diseñado por Catriel Pardo.</p>
           </div>
         </footer>
 
@@ -980,7 +980,7 @@ export default function App() {
         </button>
         
         <h1 style={{ fontFamily: "var(--font-family-title)", fontSize: "1.2rem", fontWeight: 700 }}>
-          SisGest
+          SisInt
         </h1>
 
         <button 

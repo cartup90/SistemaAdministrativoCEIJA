@@ -254,7 +254,7 @@ export default function StudentModule({ user }) {
     
     // Create Blob with exact Excel OpenXML MIME type
     const blob = new Blob([wbout], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
-    const filename = `SisGest_Estudiantes_${new Date().toISOString().split("T")[0]}.xlsx`;
+    const filename = `SistemaInstitucional_Estudiantes_${new Date().toISOString().split("T")[0]}.xlsx`;
 
     // Create temporary link and inject it into body to force download with filename
     const url = URL.createObjectURL(blob);

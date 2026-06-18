@@ -55,7 +55,7 @@ export default function Auth({ onLoginSuccess, onBackToPublic }) {
           <h1 
             style={{ 
               fontFamily: "var(--font-family-title)",
-              fontSize: "2.2rem",
+              fontSize: "1.8rem",
               fontWeight: 800,
               background: "linear-gradient(135deg, #fff 30%, var(--text-muted) 100%)",
               WebkitBackgroundClip: "text",
@@ -63,7 +63,7 @@ export default function Auth({ onLoginSuccess, onBackToPublic }) {
               marginBottom: "0.25rem"
             }}
           >
-            SisGest
+            Sistema Institucional
           </h1>
           <p style={{ color: "var(--text-muted)", fontSize: "0.9rem" }}>
             CEIJA N° 12 — Anexo Alberdi

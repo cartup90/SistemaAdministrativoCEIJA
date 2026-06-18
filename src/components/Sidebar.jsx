@@ -131,8 +131,8 @@ export default function Sidebar({
         {/* Header / Brand */}
         <div className="flex-between" style={{ marginBottom: "2.5rem" }}>
           <div>
-            <h2 style={{ fontSize: "1.5rem", fontWeight: 800 }}>
-              SisGest
+            <h2 style={{ fontSize: "1.3rem", fontWeight: 800 }}>
+              Sistema Institucional
             </h2>
             <p style={{ color: "rgba(255, 255, 255, 0.6)", fontSize: "0.75rem", fontWeight: 500 }}>
               CEIJA Alberdi
