@@ -599,6 +599,17 @@ aside.sidebar-panel .sidebar-footer span.badge-success {
   border: none !important;
 }
 
+aside.sidebar-panel .sidebar-logout-btn {
+  color: rgba(255, 255, 255, 0.85) !important;
+  transition: all var(--transition-fast);
+}
+
+aside.sidebar-panel .sidebar-logout-btn:hover {
+  background: rgba(255, 255, 255, 0.15) !important;
+  border-color: rgba(255, 255, 255, 0.5) !important;
+  color: #fff !important;
+}
+
 /* Custom Gallery hover effects */
 .gallery-card {
   position: relative;
@@ -685,4 +696,211 @@ aside.sidebar-panel .sidebar-footer span.badge-success {
   border-radius: var(--radius-sm);
   box-shadow: 0 25px 60px rgba(0,0,0,0.5);
   border: 3px solid #fff;
+}
+
+/* ============================================================================
+   SIDEBAR PANEL LAYOUT (base + responsive)
+   ============================================================================ */
+aside.sidebar-panel {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--sidebar-width);
+  height: 100vh;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  padding: 2rem 1.25rem;
+  overflow-y: auto;
+  transition: transform var(--transition-normal);
+}
+
+aside.sidebar-panel .sidebar-footer {
+  padding-top: 1.25rem;
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+@media (max-width: 768px) {
+  aside.sidebar-panel {
+    box-shadow: 8px 0 30px rgba(0, 0, 0, 0.3);
+  }
+}
+
+/* ============================================================================
+   RESPONSIVE DESIGN — NOTEBOOK (~1366px and below)
+   ============================================================================ */
+@media (max-width: 1400px) {
+  .main-content {
+    padding: 2rem 1.5rem;
+  }
+}
+
+@media (max-width: 1200px) {
+  .main-content {
+    padding: 1.5rem 1rem;
+  }
+
+  .grid-cols-3 {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+}
+
+/* ============================================================================
+   RESPONSIVE DESIGN — TABLET & MOBILE
+   ============================================================================ */
+@media (max-width: 768px) {
+  /* Force form grids to single column on mobile */
+  .grid-cols-3 {
+    grid-template-columns: 1fr !important;
+    gap: 0.75rem;
+  }
+
+  .grid-cols-2 {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  /* Reduce table cell padding on mobile */
+  .custom-table th {
+    padding: 0.6rem 0.75rem;
+    font-size: 0.75rem;
+  }
+
+  .custom-table td {
+    padding: 0.6rem 0.75rem;
+    font-size: 0.85rem;
+  }
+
+  /* Buttons */
+  .btn {
+    font-size: 0.85rem;
+    padding: 0.55rem 1rem;
+  }
+
+  /* Glass cards reduce padding */
+  .glass-card {
+    border-radius: var(--radius-sm);
+  }
+}
+
+/* ============================================================================
+   RESPONSIVE DESIGN — SMALL MOBILE (<550px)
+   ============================================================================ */
+@media (max-width: 550px) {
+  .main-content {
+    padding: 1rem 0.75rem;
+    padding-top: 5rem;
+  }
+
+  /* Stack filter dropdowns vertically */
+  .form-control {
+    font-size: 0.85rem;
+    padding: 0.55rem 0.75rem;
+  }
+
+  .form-label {
+    font-size: 0.78rem;
+  }
+
+  /* Hero section adjustments */
+  .hero-layout {
+    gap: 1rem;
+  }
+
+  .hero-layout h2 {
+    font-size: 1.5rem !important;
+  }
+
+  .stencil-text {
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+  }
+
+  .stencil-title-container {
+    padding: 0.25rem 0.6rem;
+  }
+
+  /* Gallery grid */
+  .gallery-card {
+    aspect-ratio: 16/9;
+  }
+
+  .gallery-overlay {
+    opacity: 1;
+    transform: translateY(0);
+    padding: 0.75rem 0.6rem 0.6rem;
+  }
+
+  .gallery-overlay h4 {
+    font-size: 0.85rem;
+  }
+
+  .gallery-overlay p {
+    font-size: 0.65rem;
+  }
+
+  /* Garland smaller */
+  .garland-line {
+    height: 28px;
+    padding: 0 0.5rem;
+  }
+
+  .flower-bead {
+    width: 6px;
+    height: 6px;
+  }
+
+  .panuelo-white {
+    width: 12px;
+    height: 12px;
+  }
+
+  /* Lightbox */
+  .lightbox-backdrop {
+    padding: 1rem;
+  }
+
+  .lightbox-img {
+    max-height: 60vh;
+  }
+
+  /* Robot smaller */
+  .robot-float {
+    width: 60px !important;
+    height: 60px !important;
+  }
+}
+
+/* ============================================================================
+   PUBLIC PORTAL RESPONSIVE (HEADER)
+   ============================================================================ */
+@media (max-width: 700px) {
+  header .flex-between,
+  header.flex-between {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem !important;
+    height: auto !important;
+    min-height: 3.5rem;
+  }
+}
+
+/* ============================================================================
+   MODAL RESPONSIVE
+   ============================================================================ */
+@media (max-width: 768px) {
+  /* Ensure modals are full-width on mobile */
+  .glass-card.animate-fade-in {
+    max-height: 95vh;
+  }
+}
+
+@media (max-width: 550px) {
+  .glass-card.animate-fade-in {
+    padding: 1rem !important;
+  }
 }

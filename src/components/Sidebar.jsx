@@ -3,6 +3,7 @@ import {
   Users, 
   GraduationCap, 
   Calendar, 
+  CalendarDays,
   Newspaper, 
   Settings, 
   LogOut, 
@@ -48,6 +49,12 @@ export default function Sidebar({
       icon: GraduationCap,
       roleRequired: ["admin"]
     });
+    menuItems.push({
+      id: "todo",
+      label: "Lista de Tareas",
+      icon: CheckCircle2,
+      roleRequired: ["admin"]
+    });
   }
 
   // Horarios is visible for everyone
@@ -55,6 +62,14 @@ export default function Sidebar({
     id: "schedules",
     label: "Horarios",
     icon: Calendar,
+    roleRequired: ["admin", "comun", "public"]
+  });
+
+  // Calendario Escolar visible for everyone
+  menuItems.push({
+    id: "calendar",
+    label: "Calendario Escolar",
+    icon: CalendarDays,
     roleRequired: ["admin", "comun", "public"]
   });
 
@@ -256,12 +271,14 @@ export default function Sidebar({
               width: "100%",
               padding: "0.85rem 1rem",
               borderRadius: "var(--radius-sm)",
-              border: "1px solid transparent",
+              border: "1px solid rgba(255, 255, 255, 0.35)",
+              background: "rgba(255, 255, 255, 0.08)",
               cursor: "pointer",
               fontFamily: "var(--font-family-sans)",
               fontSize: "0.95rem",
-              fontWeight: 500,
-              marginTop: "0.5rem"
+              fontWeight: 600,
+              marginTop: "0.5rem",
+              color: "#fff"
             }}
           >
             <LogOut size={18} />

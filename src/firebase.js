@@ -73,7 +73,9 @@ const MOCK_STORAGE_KEYS = {
   SCHEDULES: "sisgest_schedules",
   NEWS: "sisgest_news",
   LOGS: "sisgest_logs",
-  USER: "sisgest_user"
+  USER: "sisgest_user",
+  CALENDAR_EVENTS: "sisgest_calendar_events",
+  TODO: "sisgest_admin_tasks"
 };
 
 import seedData from "../seed_data.json";
@@ -387,9 +389,6 @@ const applyStudentFilters = (students, filters) => {
   if (filters.ano_actual) {
     result = result.filter(st => st.ano_actual === filters.ano_actual);
   }
-  if (filters.division) {
-    result = result.filter(st => st.division === filters.division);
-  }
   if (filters.estado) {
     if (filters.estado === "Inactivos") {
       result = result.filter(st => st.estado !== "Activo");
@@ -432,6 +431,9 @@ const applyStudentFilters = (students, filters) => {
       st.documentos.pase_definitivo === "Pendiente" && 
       st.ano_ingreso !== "1°"
     );
+  }
+  if (filters.en_gestion === "true") {
+    result = result.filter(st => st.en_gestion === true);
   }
 
   // Sort by Apellido then Nombre
@@ -716,3 +718,122 @@ export const seedDatabase = async (seedJson, usuarioEmail) => {
     await addAuditLog(usuarioEmail, "MIGRACION", "CONFIGURACION", "Se realizó el sembrado inicial de datos en base de datos local (Mock)");
   }
 };
+
+// ============================================================================
+// CALENDAR CUSTOM EVENTS PERSISTENCE
+// ============================================================================
+
+export const getCustomEvents = async () => {
+  if (!isMock) {
+    try {
+      const q = query(collection(db, "eventos_calendario"));
+      const querySnapshot = await getDocs(q);
+      const list = [];
+      querySnapshot.forEach(doc => {
+        list.push({ id: doc.id, ...doc.data() });
+      });
+      return list;
+    } catch (e) {
+      console.error("Error fetching custom events from Firestore:", e);
+      return [];
+    }
+  } else {
+    return getMockItems(MOCK_STORAGE_KEYS.CALENDAR_EVENTS);
+  }
+};
+
+export const saveCustomEvent = async (event, usuarioEmail) => {
+  if (!event.id) {
+    event.id = `evt_${Date.now()}`;
+  }
+  if (!isMock) {
+    await setDoc(doc(db, "eventos_calendario", event.id), event);
+  } else {
+    const events = getMockItems(MOCK_STORAGE_KEYS.CALENDAR_EVENTS);
+    const idx = events.findIndex(e => e.id === event.id);
+    if (idx !== -1) {
+      events[idx] = event;
+      await addAuditLog(usuarioEmail, "EDITAR", "CALENDARIO", `Se editó el evento personalizado: "${event.titulo}"`);
+    } else {
+      events.push(event);
+      await addAuditLog(usuarioEmail, "CREAR", "CALENDARIO", `Se creó el evento personalizado: "${event.titulo}"`);
+    }
+    saveMockItems(MOCK_STORAGE_KEYS.CALENDAR_EVENTS, events);
+  }
+  return event;
+};
+
+export const deleteCustomEvent = async (id, usuarioEmail) => {
+  if (!isMock) {
+    await deleteDoc(doc(db, "eventos_calendario", id));
+  } else {
+    let events = getMockItems(MOCK_STORAGE_KEYS.CALENDAR_EVENTS);
+    const event = events.find(e => e.id === id);
+    events = events.filter(e => e.id !== id);
+    saveMockItems(MOCK_STORAGE_KEYS.CALENDAR_EVENTS, events);
+    if (event) {
+      await addAuditLog(usuarioEmail, "ELIMINAR", "CALENDARIO", `Se eliminó el evento personalizado: "${event.titulo}"`);
+    }
+  }
+};
+
+// ============================================================================
+// ADMIN TODO LIST PERSISTENCE
+// ============================================================================
+
+export const getAdminTasks = async () => {
+  if (!isMock) {
+    try {
+      const q = query(collection(db, "tareas_admin"));
+      const querySnapshot = await getDocs(q);
+      const list = [];
+      querySnapshot.forEach(doc => {
+        list.push({ id: doc.id, ...doc.data() });
+      });
+      return list;
+    } catch (e) {
+      console.error("Error fetching admin tasks from Firestore:", e);
+      return [];
+    }
+  } else {
+    return getMockItems(MOCK_STORAGE_KEYS.TODO);
+  }
+};
+
+export const saveAdminTask = async (task, usuarioEmail) => {
+  if (!task.id) {
+    task.id = `tsk_${Date.now()}`;
+    task.fecha_creacion = new Date().toISOString();
+  }
+  if (!isMock) {
+    await setDoc(doc(db, "tareas_admin", task.id), task);
+  } else {
+    const tasks = getMockItems(MOCK_STORAGE_KEYS.TODO);
+    const idx = tasks.findIndex(t => t.id === task.id);
+    if (idx !== -1) {
+      tasks[idx] = task;
+      await addAuditLog(usuarioEmail, "EDITAR", "TAREAS", `Se modificó la tarea: "${task.titulo}"`);
+    } else {
+      tasks.push(task);
+      await addAuditLog(usuarioEmail, "CREAR", "TAREAS", `Se creó la tarea: "${task.titulo}"`);
+    }
+    saveMockItems(MOCK_STORAGE_KEYS.TODO, tasks);
+  }
+  return task;
+};
+
+export const deleteAdminTask = async (id, usuarioEmail) => {
+  if (!isMock) {
+    await deleteDoc(doc(db, "tareas_admin", id));
+  } else {
+    let tasks = getMockItems(MOCK_STORAGE_KEYS.TODO);
+    const task = tasks.find(t => t.id === id);
+    tasks = tasks.filter(t => t.id !== id);
+    saveMockItems(MOCK_STORAGE_KEYS.TODO, tasks);
+    if (task) {
+      await addAuditLog(usuarioEmail, "ELIMINAR", "TAREAS", `Se eliminó la tarea: "${task.titulo}"`);
+    }
+  }
+};
+
+

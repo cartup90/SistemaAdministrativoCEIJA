@@ -9,6 +9,8 @@ import TeacherModule from "./components/TeacherModule";
 import ScheduleModule from "./components/ScheduleModule";
 import NewsModule from "./components/NewsModule";
 import ConfigModule from "./components/ConfigModule";
+import CalendarModule from "./components/CalendarModule";
+import TodoModule from "./components/TodoModule";
 
 // Import school photographs
 import entranceImg from "./assets/Fotos escuela/IMG_20250219_190308.jpg";
@@ -247,6 +249,14 @@ export default function App() {
               <span className="hide-mobile" style={{ marginLeft: "0.25rem" }}>Horarios</span>
             </button>
             <button
+              onClick={() => setActivePublicTab("calendar")}
+              className={`btn ${activePublicTab === "calendar" ? "btn-primary" : "btn-secondary"}`}
+              style={{ padding: "0.5rem 1rem", fontSize: "0.85rem" }}
+            >
+              <Calendar size={16} style={{ color: "var(--color-ocre)" }} />
+              <span className="hide-mobile" style={{ marginLeft: "0.25rem" }}>Calendario Escolar</span>
+            </button>
+            <button
               onClick={() => setActivePublicTab("faq")}
               className={`btn ${activePublicTab === "faq" ? "btn-primary" : "btn-secondary"}`}
               style={{ padding: "0.5rem 1rem", fontSize: "0.85rem" }}
@@ -422,6 +432,7 @@ export default function App() {
           <div className="public-content">
             {activePublicTab === "news" && <NewsModule user={null} />}
             {activePublicTab === "schedules" && <ScheduleModule user={null} isPublic={true} />}
+            {activePublicTab === "calendar" && <CalendarModule user={null} />}
             {activePublicTab === "faq" && <FAQPublicView />}
           </div>
 
@@ -1002,6 +1013,8 @@ export default function App() {
         {currentModule === "teachers" && <TeacherModule user={user} />}
         {currentModule === "schedules" && <ScheduleModule user={user} />}
         {currentModule === "news" && <NewsModule user={user} />}
+        {currentModule === "calendar" && <CalendarModule user={user} />}
+        {currentModule === "todo" && <TodoModule user={user} />}
         {currentModule === "config" && <ConfigModule user={user} />}
       </main>
       <SessionExpiredModal isOpen={sessionExpiredAlert} onClose={() => setSessionExpiredAlert(false)} />

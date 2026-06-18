@@ -29,13 +29,13 @@ export default function StudentModule({ user }) {
   const [filters, setFilters] = useState({
     search: "",
     ano_actual: "",
-    division: "",
     estado: "Activo", // default active
     turno: "",
     tiene_previas: "",
     documentacion_completa: "",
     falta_pase_definitivo: "",
-    ano_ingreso: ""
+    ano_ingreso: "",
+    en_gestion: ""
   });
 
   // Modals state
@@ -79,14 +79,12 @@ export default function StudentModule({ user }) {
       telefono: "",
       domicilio: "",
       correo: "",
-      contacto_emergencia_nombre: "",
-      contacto_emergencia_tel: "",
       fecha_ingreso: new Date().toISOString().split("T")[0],
       ano_ingreso: "1°",
       ano_actual: "1°",
-      division: "Única",
       turno: "Noche",
       estado: "Activo",
+      en_gestion: false,
       bibliorato: "",
       ano_apertura_legajo: new Date().getFullYear(),
       documentos: {
@@ -221,9 +219,9 @@ export default function StudentModule({ user }) {
       const row = {
         "Nombre Completo": `${s.apellido}, ${s.nombre}`,
         "Año Actual": s.ano_actual,
-        "División": s.division,
         "Turno": s.turno,
         "Estado": s.estado,
+        "En Gestión": s.en_gestion ? "SÍ" : "NO",
         "Apto Titular": s.apto_titular ? "SI" : "NO",
         "Apertura Legajo": s.ano_apertura_legajo,
         "Bibliorato": s.bibliorato
@@ -236,7 +234,6 @@ export default function StudentModule({ user }) {
         row["Edad"] = s.edad;
         row["Celular"] = s.telefono;
         row["Correo Electrónico"] = s.correo;
-        row["Contacto Emergencia"] = `${s.contacto_emergencia_nombre || ""} (${s.contacto_emergencia_tel || ""})`;
         row["Año Ingreso"] = s.ano_ingreso;
         row["DNI Presentado"] = s.documentos?.dni || "Pendiente";
         row["CUS Presentado"] = s.documentos?.cus || "Pendiente";
@@ -251,7 +248,27 @@ export default function StudentModule({ user }) {
     const worksheet = XLSX.utils.json_to_sheet(dataToExport);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Estudiantes Filtrados");
-    XLSX.writeFile(workbook, `SisGest_Estudiantes_${new Date().toISOString().split("T")[0]}.xlsx`);
+
+    // Generate sheet data as binary array
+    const wbout = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+    
+    // Create Blob with exact Excel OpenXML MIME type
+    const blob = new Blob([wbout], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+    const filename = `SisGest_Estudiantes_${new Date().toISOString().split("T")[0]}.xlsx`;
+
+    // Create temporary link and inject it into body to force download with filename
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+
+    // Clean up
+    setTimeout(() => {
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }, 150);
   };
 
   // Add previa to current editing student
@@ -385,15 +402,7 @@ export default function StudentModule({ user }) {
             </select>
           </div>
 
-          <div className="form-group" style={{ width: "120px", marginBottom: 0 }}>
-            <label className="form-label" htmlFor="division">División</label>
-            <select id="division" name="division" className="form-control" value={filters.division} onChange={handleFilterChange}>
-              <option value="">Todos</option>
-              <option value="A">A</option>
-              <option value="B">B</option>
-              <option value="Única">Única</option>
-            </select>
-          </div>
+
 
           <div className="form-group" style={{ width: "120px", marginBottom: 0 }}>
             <label className="form-label" htmlFor="turno">Turno</label>
@@ -421,6 +430,18 @@ export default function StudentModule({ user }) {
         {/* Advanced Filter Row */}
         <div style={{ display: "flex", gap: "1.5rem", flexWrap: "wrap", borderTop: "1px solid rgba(255,255,255,0.05)", paddingTop: "1rem", alignItems: "center" }}>
           <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
+            <label style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "0.85rem", cursor: "pointer", color: "var(--text-muted)" }} htmlFor="en_gestion_chk">
+              <input 
+                id="en_gestion_chk"
+                type="checkbox" 
+                name="en_gestion"
+                checked={filters.en_gestion === "true"}
+                onChange={handleFilterChange}
+                style={{ accentColor: "var(--color-ocre)" }}
+              />
+              <span>En Gestión</span>
+            </label>
+
             <label style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "0.85rem", cursor: "pointer", color: "var(--text-muted)" }} htmlFor="tiene_previas_chk">
               <input 
                 id="tiene_previas_chk"
@@ -600,7 +621,6 @@ export default function StudentModule({ user }) {
                       <div><strong>Celular:</strong></div> <div>{selectedStudent.telefono || "N/A"}</div>
                       <div><strong>Correo:</strong></div> <div>{selectedStudent.correo || "N/A"}</div>
                       <div><strong>Domicilio:</strong></div> <div>{selectedStudent.domicilio || "N/A"}</div>
-                      <div><strong>Contacto Emergencia:</strong></div> <div>{selectedStudent.contacto_emergencia_nombre ? `${selectedStudent.contacto_emergencia_nombre} (${selectedStudent.contacto_emergencia_tel || ""})` : "N/A"}</div>
                     </>
                   )}
                   {!isAdmin && (
@@ -618,19 +638,16 @@ export default function StudentModule({ user }) {
                 </h4>
                 <div style={detailGridStyle}>
                   <div><strong>Año Actual / Turno:</strong></div> <div>{selectedStudent.ano_actual || "-"} Año | {selectedStudent.turno}</div>
-                  <div><strong>División / Curso:</strong></div> <div>{selectedStudent.division || "Única"}</div>
                   <div><strong>Estado Escolar:</strong></div> 
-                  <div>
+                  <div style={{ display: "flex", gap: "0.5rem", alignItems: "center", flexWrap: "wrap" }}>
                     <span className="badge" style={{ backgroundColor: selectedStudent.estado === "Activo" ? "var(--color-success-bg)" : "var(--color-error-bg)", color: selectedStudent.estado === "Activo" ? "var(--color-success)" : "var(--color-error)" }}>
                       {selectedStudent.estado}
                     </span>
+                    {selectedStudent.en_gestion && (
+                      <span className="badge" style={{ backgroundColor: "rgba(244, 180, 26, 0.15)", color: "var(--color-warning)", border: "1px solid rgba(244, 180, 26, 0.3)" }}>En Gestión</span>
+                    )}
                   </div>
                   <div><strong>Año de Ingreso:</strong></div> <div>Ingresó en {selectedStudent.ano_ingreso} (F. Ingreso: {selectedStudent.fecha_ingreso || "N/A"})</div>
-                  {selectedStudent.motivo_secundario && (
-                    <>
-                      <div><strong>Motivación:</strong></div> <div>{selectedStudent.motivo_secundario}</div>
-                    </>
-                  )}
                 </div>
               </div>
             </div>
@@ -852,40 +869,7 @@ export default function StudentModule({ user }) {
                   />
                 </div>
 
-                <div className="form-group">
-                  <label className="form-label" htmlFor="form_ec_nombre">Contacto de Emergencia (Nombre)</label>
-                  <input 
-                    id="form_ec_nombre"
-                    type="text" 
-                    className="form-control"
-                    placeholder="Nombre Completo"
-                    value={formValues.contacto_emergencia_nombre || ""}
-                    onChange={(e) => setFormValues(prev => ({ ...prev, contacto_emergencia_nombre: e.target.value }))}
-                  />
-                </div>
 
-                <div className="form-group">
-                  <label className="form-label" htmlFor="form_ec_tel">Contacto de Emergencia (Teléfono)</label>
-                  <input 
-                    id="form_ec_tel"
-                    type="text" 
-                    className="form-control"
-                    placeholder="Celular/Fijo"
-                    value={formValues.contacto_emergencia_tel || ""}
-                    onChange={(e) => setFormValues(prev => ({ ...prev, contacto_emergencia_tel: e.target.value }))}
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label className="form-label" htmlFor="form_motivo">Motivo de finalización</label>
-                  <input 
-                    id="form_motivo"
-                    type="text" 
-                    className="form-control"
-                    value={formValues.motivo_secundario}
-                    onChange={(e) => setFormValues(prev => ({ ...prev, motivo_secundario: e.target.value }))}
-                  />
-                </div>
 
                 <div className="form-group">
                   <label className="form-label" htmlFor="form_ano_ingreso">Año de Ingreso *</label>
@@ -915,19 +899,7 @@ export default function StudentModule({ user }) {
                   </select>
                 </div>
 
-                <div className="form-group">
-                  <label className="form-label" htmlFor="form_division">División/Curso *</label>
-                  <select 
-                    id="form_division"
-                    className="form-control"
-                    value={formValues.division}
-                    onChange={(e) => setFormValues(prev => ({ ...prev, division: e.target.value }))}
-                  >
-                    <option value="A">A</option>
-                    <option value="B">B</option>
-                    <option value="Única">Única</option>
-                  </select>
-                </div>
+
 
                 <div className="form-group">
                   <label className="form-label" htmlFor="form_turno">Turno *</label>
@@ -956,6 +928,22 @@ export default function StudentModule({ user }) {
                     <option value="Egresado con Previas">Con Previas Eg.</option>
                     <option value="Baja">Baja</option>
                   </select>
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label" htmlFor="form_en_gestion" style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                    En Gestión
+                  </label>
+                  <label style={{ display: "flex", alignItems: "center", gap: "0.5rem", cursor: "pointer", fontSize: "0.9rem", color: "var(--text-main)", padding: "0.65rem 0" }}>
+                    <input
+                      id="form_en_gestion"
+                      type="checkbox"
+                      checked={!!formValues.en_gestion}
+                      onChange={(e) => setFormValues(prev => ({ ...prev, en_gestion: e.target.checked }))}
+                      style={{ accentColor: "var(--color-ocre)", width: "18px", height: "18px" }}
+                    />
+                    <span>{formValues.en_gestion ? "Sí — En proceso de gestión" : "No"}</span>
+                  </label>
                 </div>
 
                 <div className="form-group">
