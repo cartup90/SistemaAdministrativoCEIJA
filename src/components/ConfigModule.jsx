@@ -12,16 +12,13 @@ import {
   User,
   ShieldCheck
 } from "lucide-react";
-import { getAuditLogs, seedDatabase, isMock, createUser } from "../firebase";
+import { getAuditLogs, isMock, createUser } from "../firebase";
 import { useDialog } from "../context/DialogContext";
-import seedData from "../../seed_data.json";
 
 export default function ConfigModule({ user }) {
   const { confirm, alert } = useDialog();
   const [logs, setLogs] = useState([]);
   const [loadingLogs, setLoadingLogs] = useState(true);
-  const [seeding, setSeeding] = useState(false);
-  const [seedSuccess, setSeedSuccess] = useState(false);
   const [searchLog, setSearchLog] = useState("");
   
   // User creation form state
@@ -47,27 +44,6 @@ export default function ConfigModule({ user }) {
   useEffect(() => {
     loadLogs();
   }, []);
-
-  const handleSeed = async () => {
-    const isConfirmed = await confirm(
-      "¿Está seguro de que desea sembrar la base de datos? Esto cargará la información inicial de 326 alumnos, 22 profesores y horarios del CEIJA.",
-      "Confirmar Sembrado"
-    );
-    if (isConfirmed) {
-      setSeeding(true);
-      setSeedSuccess(false);
-      try {
-        await seedDatabase(seedData, user.email);
-        setSeedSuccess(true);
-        loadLogs();
-      } catch (err) {
-        console.error(err);
-        await alert("Error durante la migración de datos.", "Error de Sembrado", "error");
-      } finally {
-        setSeeding(false);
-      }
-    }
-  };
 
   const handleCreateUser = async (e) => {
     e.preventDefault();
@@ -123,59 +99,11 @@ export default function ConfigModule({ user }) {
           <span>Configuración del Sistema</span>
         </h1>
         <p style={{ color: "var(--text-muted)", fontSize: "0.9rem" }}>
-          Sembrado inicial de datos, gestión de cuentas de usuarios y logs de auditoría general.
+          Gestión de cuentas de usuarios y logs de auditoría general.
         </p>
       </div>
 
-      <div className="grid-cols-2">
-        {/* Seeding & Administration Panel */}
-        <div className="glass-card" style={{ padding: "2rem", display: "flex", flexDirection: "column", gap: "1.5rem" }}>
-          <h2 style={{ fontSize: "1.3rem", color: "#fff", borderBottom: "1px solid var(--border-glass)", paddingBottom: "0.5rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
-            <Database size={18} style={{ color: "var(--primary)" }} />
-            <span>Base de Datos y Migración</span>
-          </h2>
-
-          <p style={{ color: "var(--text-muted)", fontSize: "0.9rem", lineHeight: 1.5 }}>
-            Cargue los datos iniciales procesados de las planillas Excel directamente a la base de datos de producción o desarrollo local.
-          </p>
-
-          <div 
-            style={{ 
-              background: "rgba(255,255,255,0.02)", 
-              border: "1px solid var(--border-glass)", 
-              borderRadius: "var(--radius-sm)", 
-              padding: "1rem",
-              fontSize: "0.85rem",
-              color: "var(--text-muted)",
-              display: "flex",
-              flexDirection: "column",
-              gap: "0.35rem"
-            }}
-          >
-            <div><strong>Resumen del Paquete de Siembra:</strong></div>
-            <div>• Estudiantes consolidados: <strong>{seedData.estudiantes ? seedData.estudiantes.length : 0} legajos</strong></div>
-            <div>• Profesores y personal: <strong>{seedData.profesores ? seedData.profesores.length : 0} docentes</strong></div>
-            <div>• Horarios por año lectivo: <strong>{seedData.horarios ? seedData.horarios.length : 0} grillas semanales</strong></div>
-          </div>
-
-          {seedSuccess && (
-            <div className="badge-success" style={{ padding: "0.75rem", borderRadius: "var(--radius-sm)", display: "flex", gap: "0.5rem", fontSize: "0.85rem", textTransform: "none", letterSpacing: "normal" }}>
-              <CheckCircle size={16} />
-              <span>Base de datos sembrada con éxito. Verifique los legajos escolares.</span>
-            </div>
-          )}
-
-          <button 
-            onClick={handleSeed}
-            className="btn btn-primary"
-            style={{ alignSelf: "flex-start" }}
-            disabled={seeding}
-          >
-            <Database size={16} />
-            <span>{seeding ? "Sembrando base de datos..." : "Sembrar Base de Datos"}</span>
-          </button>
-        </div>
-
+      <div>
         {/* User Account Provisioning */}
         <div className="glass-card" style={{ padding: "2rem", display: "flex", flexDirection: "column", gap: "1.5rem" }}>
           <h2 style={{ fontSize: "1.3rem", color: "#fff", borderBottom: "1px solid var(--border-glass)", paddingBottom: "0.5rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
