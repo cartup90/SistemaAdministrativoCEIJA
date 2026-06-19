@@ -392,6 +392,7 @@ export default function StudentModule({ user }) {
             </div>
           </div>
 
+
           <div className="form-group" style={{ width: "120px", marginBottom: 0 }}>
             <label className="form-label" htmlFor="ano_actual">Año Actual</label>
             <select id="ano_actual" name="ano_actual" className="form-control" value={filters.ano_actual} onChange={handleFilterChange}>
@@ -399,10 +400,9 @@ export default function StudentModule({ user }) {
               <option value="1°">1° Año</option>
               <option value="2°">2° Año</option>
               <option value="3°">3° Año</option>
+              <option value="No cursa">No cursa</option>
             </select>
           </div>
-
-
 
           <div className="form-group" style={{ width: "120px", marginBottom: 0 }}>
             <label className="form-label" htmlFor="turno">Turno</label>
@@ -896,6 +896,7 @@ export default function StudentModule({ user }) {
                     <option value="1°">1° Año</option>
                     <option value="2°">2° Año</option>
                     <option value="3°">3° Año</option>
+                    <option value="No cursa">No cursa</option>
                   </select>
                 </div>
 

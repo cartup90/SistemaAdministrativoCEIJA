@@ -727,7 +727,7 @@ export default function App() {
                       Estado del Legajo Escolar
                     </h3>
                     <p style={{ fontSize: "0.8rem", color: "var(--text-muted)", fontWeight: 500 }}>
-                      {publicStudentInfo.apellido}, {publicStudentInfo.nombre} | Curso: {publicStudentInfo.ano_actual} Año div. {publicStudentInfo.division} - Turno {publicStudentInfo.turno}
+                      {publicStudentInfo.apellido}, {publicStudentInfo.nombre} | {publicStudentInfo.ano_actual === "No cursa" ? "No cursa actualmente" : `Curso: ${publicStudentInfo.ano_actual} Año div. ${publicStudentInfo.division} - Turno ${publicStudentInfo.turno}`}
                     </p>
                   </div>
                 </div>
@@ -749,6 +749,20 @@ export default function App() {
                 const todayName = daysMap[todayNum];
                 const isWeekend = todayNum === 0 || todayNum === 6;
                 const displayDay = isWeekend ? "Lunes" : todayName;
+
+                if (publicStudentInfo.ano_actual === "No cursa") {
+                  return (
+                    <div className="glass-card" style={{ padding: "1.25rem", background: "rgba(0,0,0,0.02)", marginBottom: "1.5rem", borderLeft: "4px solid var(--color-warning)" }}>
+                      <h4 style={{ color: "var(--text-main)", marginBottom: "0.25rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                        <Calendar size={18} style={{ color: "var(--color-warning)" }} />
+                        <span>Horario Escolar</span>
+                      </h4>
+                      <p style={{ color: "var(--text-muted)", fontSize: "0.85rem" }}>
+                        Este estudiante no está cursando actualmente, por lo que no tiene un horario asignado.
+                      </p>
+                    </div>
+                  );
+                }
 
                 const studentSchedule = schedules.find(s => s.ano === publicStudentInfo.ano_actual);
                 
