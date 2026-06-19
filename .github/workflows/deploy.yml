@@ -36,6 +36,16 @@ jobs:
         
       - name: Build
         run: npm run build
+        env:
+          VITE_DB_PROVIDER: supabase
+          VITE_FIREBASE_API_KEY: AIzaSyCU-Dsjhl6HIk0qWMxLFROFgG1oJtJ8nkk
+          VITE_FIREBASE_AUTH_DOMAIN: make-personal-470318.firebaseapp.com
+          VITE_FIREBASE_PROJECT_ID: make-personal-470318
+          VITE_FIREBASE_STORAGE_BUCKET: make-personal-470318.firebasestorage.app
+          VITE_FIREBASE_MESSAGING_SENDER_ID: 496064273502
+          VITE_FIREBASE_APP_ID: 1:496064273502:web:9b3b69719ea7a6fa43a8cf
+          VITE_SUPABASE_URL: https://jeupmxocuzbsfrpydpge.supabase.co
+          VITE_SUPABASE_ANON_KEY: sb_publishable_s4lN7DzCmNZF30RPahqFlw_tgJ-C9gP
         
       - name: Setup Pages
         uses: actions/configure-pages@v4
