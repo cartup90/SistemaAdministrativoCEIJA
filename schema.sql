@@ -95,3 +95,14 @@ CREATE TABLE logs_auditoria (
     modulo VARCHAR(50) NOT NULL, -- 'ESTUDIANTES', 'PROFESORES', 'HORARIOS', 'NOVEDADES'
     descripcion TEXT NOT NULL
 );
+
+-- Tabla de Eventos del Calendario
+CREATE TABLE eventos_calendario (
+    id VARCHAR(50) PRIMARY KEY,
+    titulo VARCHAR(255) NOT NULL,
+    descripcion TEXT,
+    fecha_inicio VARCHAR(20) NOT NULL,
+    fecha_fin VARCHAR(20) NOT NULL,
+    color VARCHAR(20),
+    tipo VARCHAR(100) NOT NULL
+);

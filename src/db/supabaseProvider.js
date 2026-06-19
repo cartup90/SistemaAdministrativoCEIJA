@@ -791,7 +791,31 @@ export const getCustomEvents = async () => {
     console.error("Error fetching events from Supabase:", error);
     return [];
   }
-  return data || [];
+  
+  const MONTHS = [
+    "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+    "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+  ];
+  
+  // Map DB schema to frontend schema
+  return (data || []).map(evt => {
+    let mesStr = "";
+    let fechaStr = "";
+    if (evt.fecha_inicio) {
+      const d = new Date(evt.fecha_inicio + "T00:00:00");
+      mesStr = MONTHS[d.getMonth()] || "";
+      fechaStr = d.toLocaleDateString("es-AR", { day: "2-digit", month: "2-digit" });
+    }
+    return {
+      id: evt.id,
+      titulo: evt.titulo,
+      tipo: evt.tipo,
+      startDate: evt.fecha_inicio,
+      endDate: evt.fecha_fin,
+      mes: mesStr,
+      fecha: fechaStr
+    };
+  });
 };
 
 export const saveCustomEvent = async (event, usuarioEmail) => {
@@ -805,7 +829,18 @@ export const saveCustomEvent = async (event, usuarioEmail) => {
     .eq("id", event.id)
     .maybeSingle();
 
-  const { error } = await supabase.from("eventos_calendario").upsert(event);
+  // Map frontend schema to DB schema
+  const dbEvent = {
+    id: event.id,
+    titulo: event.titulo,
+    tipo: event.tipo,
+    fecha_inicio: event.startDate,
+    fecha_fin: event.endDate,
+    color: "",
+    descripcion: ""
+  };
+
+  const { error } = await supabase.from("eventos_calendario").upsert(dbEvent);
   if (error) throw error;
   
   if (existing) {
