@@ -874,7 +874,14 @@ export const getAdminTasks = async () => {
     console.error("Error fetching tasks from Supabase:", error);
     return [];
   }
-  return data || [];
+  
+  // Map DB schema to frontend schema
+  return (data || []).map(task => ({
+    ...task,
+    fecha_limite: task.fecha_vencimiento,
+    // Provide fallback for any missing field
+    descripcion: task.descripcion || ""
+  }));
 };
 
 export const saveAdminTask = async (task, usuarioEmail) => {
@@ -889,7 +896,18 @@ export const saveAdminTask = async (task, usuarioEmail) => {
     .eq("id", task.id)
     .maybeSingle();
 
-  const { error } = await supabase.from("tareas_admin").upsert(task);
+  // Map frontend schema to DB schema
+  const dbTask = {
+    id: task.id,
+    titulo: task.titulo,
+    descripcion: task.descripcion || "",
+    completada: task.completada || false,
+    fecha_creacion: task.fecha_creacion,
+    fecha_vencimiento: task.fecha_limite || null,
+    prioridad: task.prioridad || "Media"
+  };
+
+  const { error } = await supabase.from("tareas_admin").upsert(dbTask);
   if (error) throw error;
   
   if (existing) {

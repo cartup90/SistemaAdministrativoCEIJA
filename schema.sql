@@ -106,3 +106,14 @@ CREATE TABLE eventos_calendario (
     color VARCHAR(20),
     tipo VARCHAR(100) NOT NULL
 );
+
+-- Tabla de Tareas del Administrador (To-Do List)
+CREATE TABLE tareas_admin (
+    id VARCHAR(50) PRIMARY KEY,
+    titulo VARCHAR(255) NOT NULL,
+    descripcion TEXT,
+    completada BOOLEAN DEFAULT FALSE,
+    fecha_creacion VARCHAR(50) NOT NULL,
+    fecha_vencimiento VARCHAR(50),
+    prioridad VARCHAR(50) NOT NULL
+);
