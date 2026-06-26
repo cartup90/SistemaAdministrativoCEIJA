@@ -138,7 +138,8 @@ export const getStudents = async (filters = {}) => {
       cus: st.cus_presentado || "Pendiente",
       certificado_primaria: st.certificado_primaria || "Pendiente",
       pase_provisorio: st.pase_provisorio || "Pendiente",
-      pase_definitivo: st.pase_definitivo || "Pendiente"
+      pase_definitivo: st.pase_definitivo || "Pendiente",
+      equivalencias: st.equivalencias_presentado || "Pendiente"
     };
     
     // Map materias_previas to previas
@@ -183,7 +184,8 @@ export const getStudentPublicInfo = async (dni) => {
       cus: st.cus_presentado || "Pendiente",
       certificado_primaria: st.certificado_primaria || "Pendiente",
       pase_provisorio: st.pase_provisorio || "Pendiente",
-      pase_definitivo: st.pase_definitivo || "Pendiente"
+      pase_definitivo: st.pase_definitivo || "Pendiente",
+      equivalencias: st.equivalencias_presentado || "Pendiente"
     };
     
     const previas = (st.materias_previas || []).map(p => ({
@@ -201,7 +203,6 @@ export const getStudentPublicInfo = async (dni) => {
       apellido: st.apellido,
       ano_actual: st.ano_actual,
       division: st.division,
-      turno: st.turno,
       estado: st.estado,
       documentos,
       previas
@@ -230,9 +231,6 @@ const applyStudentFilters = (students, filters) => {
     } else {
       result = result.filter(st => st.estado === filters.estado);
     }
-  }
-  if (filters.turno) {
-    result = result.filter(st => st.turno === filters.turno);
   }
   if (filters.ano_ingreso) {
     result = result.filter(st => st.ano_ingreso === filters.ano_ingreso);
@@ -316,7 +314,6 @@ export const saveStudent = async (student, usuarioEmail) => {
     ano_ingreso: student.ano_ingreso,
     ano_actual: student.ano_actual,
     division: student.division || "Única",
-    turno: student.turno || "Noche",
     estado: student.estado || "Activo",
     bibliorato: student.bibliorato || null,
     ano_apertura_legajo: student.ano_apertura_legajo ? parseInt(student.ano_apertura_legajo) : null,
@@ -325,6 +322,7 @@ export const saveStudent = async (student, usuarioEmail) => {
     certificado_primaria: student.documentos?.certificado_primaria || "Pendiente",
     pase_provisorio: student.documentos?.pase_provisorio || "Pendiente",
     pase_definitivo: student.documentos?.pase_definitivo || "Pendiente",
+    equivalencias_presentado: student.documentos?.equivalencias || "Pendiente",
     apto_titular: student.apto_titular || false,
     observaciones: student.observaciones || null
   };

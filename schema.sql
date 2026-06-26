@@ -17,7 +17,6 @@ CREATE TABLE estudiantes (
     ano_ingreso VARCHAR(10) NOT NULL, -- '1°', '2°', '3°'
     ano_actual VARCHAR(10) NOT NULL,  -- '1°', '2°', '3°'
     division VARCHAR(20) DEFAULT 'Única',
-    turno VARCHAR(30) DEFAULT 'Noche', -- 'Mañana', 'Tarde', 'Noche'
     estado VARCHAR(50) NOT NULL DEFAULT 'Activo', -- 'Activo', 'Egresado', 'Abandonó', 'Trasladado'
     bibliorato VARCHAR(50),
     ano_apertura_legajo INT,
@@ -26,6 +25,7 @@ CREATE TABLE estudiantes (
     certificado_primaria VARCHAR(20) DEFAULT 'Pendiente', -- 'Presentado', 'Pendiente', 'No aplica'
     pase_provisorio VARCHAR(20) DEFAULT 'Pendiente', -- 'Presentado', 'Pendiente', 'Reemplazado', 'No aplica'
     pase_definitivo VARCHAR(20) DEFAULT 'Pendiente', -- 'Presentado', 'Pendiente', 'No aplica'
+    equivalencias_presentado VARCHAR(20) DEFAULT 'Pendiente', -- 'Presentado', 'Pendiente', 'No aplica'
     apto_titular BOOLEAN DEFAULT FALSE,
     observaciones TEXT
 );

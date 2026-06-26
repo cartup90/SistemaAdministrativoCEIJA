@@ -25,12 +25,10 @@ export default function StudentModule({ user }) {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("activos"); // "activos" | "inactivos"
   
-  // Filters state
   const [filters, setFilters] = useState({
     search: "",
     ano_actual: "",
     estado: "Activo", // default active
-    turno: "",
     tiene_previas: "",
     documentacion_completa: "",
     falta_pase_definitivo: "",
@@ -82,7 +80,6 @@ export default function StudentModule({ user }) {
       fecha_ingreso: new Date().toISOString().split("T")[0],
       ano_ingreso: "1°",
       ano_actual: "1°",
-      turno: "Noche",
       estado: "Activo",
       en_gestion: false,
       bibliorato: "",
@@ -92,7 +89,8 @@ export default function StudentModule({ user }) {
         cus: "Pendiente",
         certificado_primaria: "Pendiente",
         pase_provisorio: "No aplica",
-        pase_definitivo: "No aplica"
+        pase_definitivo: "No aplica",
+        equivalencias: "No aplica"
       },
       previas: []
     };
@@ -106,11 +104,13 @@ export default function StudentModule({ user }) {
         docs.certificado_primaria = "Pendiente";
         docs.pase_provisorio = "No aplica";
         docs.pase_definitivo = "No aplica";
+        docs.equivalencias = "No aplica";
       } else {
         // Allow either Certificado Primaria or Pase Definitivo/Provisorio
         docs.certificado_primaria = "Pendiente";
         docs.pase_provisorio = "Pendiente";
         docs.pase_definitivo = "Pendiente";
+        docs.equivalencias = "Pendiente";
       }
       return {
         ...prev,
@@ -219,7 +219,6 @@ export default function StudentModule({ user }) {
       const row = {
         "Nombre Completo": `${s.apellido}, ${s.nombre}`,
         "Año Actual": s.ano_actual,
-        "Turno": s.turno,
         "Estado": s.estado,
         "En Gestión": s.en_gestion ? "SÍ" : "NO",
         "Apto Titular": s.apto_titular ? "SI" : "NO",
@@ -240,6 +239,7 @@ export default function StudentModule({ user }) {
         row["Cert. Primaria"] = s.documentos?.certificado_primaria || "N/A";
         row["Pase Provisorio"] = s.documentos?.pase_provisorio || "N/A";
         row["Pase Definitivo"] = s.documentos?.pase_definitivo || "N/A";
+        row["Equivalencias"] = s.documentos?.equivalencias || "N/A";
         row["Cant. Previas"] = s.previas?.length || 0;
       }
       return row;
@@ -404,15 +404,6 @@ export default function StudentModule({ user }) {
             </select>
           </div>
 
-          <div className="form-group" style={{ width: "120px", marginBottom: 0 }}>
-            <label className="form-label" htmlFor="turno">Turno</label>
-            <select id="turno" name="turno" className="form-control" value={filters.turno} onChange={handleFilterChange}>
-              <option value="">Todos</option>
-              <option value="Mañana">Mañana</option>
-              <option value="Tarde">Tarde</option>
-              <option value="Noche">Noche</option>
-            </select>
-          </div>
 
           {activeTab === "inactivos" && (
             <div className="form-group" style={{ width: "160px", marginBottom: 0 }}>
@@ -637,7 +628,7 @@ export default function StudentModule({ user }) {
                   Datos Académicos e Ingreso
                 </h4>
                 <div style={detailGridStyle}>
-                  <div><strong>Año Actual / Turno:</strong></div> <div>{selectedStudent.ano_actual || "-"} Año | {selectedStudent.turno}</div>
+                  <div><strong>Año Actual:</strong></div> <div>{selectedStudent.ano_actual || "-"} Año</div>
                   <div><strong>Estado Escolar:</strong></div> 
                   <div style={{ display: "flex", gap: "0.5rem", alignItems: "center", flexWrap: "wrap" }}>
                     <span className="badge" style={{ backgroundColor: selectedStudent.estado === "Activo" ? "var(--color-success-bg)" : "var(--color-error-bg)", color: selectedStudent.estado === "Activo" ? "var(--color-success)" : "var(--color-error)" }}>
@@ -689,6 +680,13 @@ export default function StudentModule({ user }) {
                   <strong>Pase Definitivo:</strong>
                   <span>{selectedStudent.documentos?.pase_definitivo || "Pendiente"}</span>
                 </div>
+                {/* Equivalencias (solo 2do y 3er año) */}
+                {selectedStudent.ano_ingreso !== "1°" && (
+                  <div style={docCheckStyle(selectedStudent.documentos?.equivalencias)}>
+                    <strong>Equivalencias:</strong>
+                    <span>{selectedStudent.documentos?.equivalencias || "Pendiente"}</span>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -903,20 +901,6 @@ export default function StudentModule({ user }) {
 
 
                 <div className="form-group">
-                  <label className="form-label" htmlFor="form_turno">Turno *</label>
-                  <select 
-                    id="form_turno"
-                    className="form-control"
-                    value={formValues.turno}
-                    onChange={(e) => setFormValues(prev => ({ ...prev, turno: e.target.value }))}
-                  >
-                    <option value="Mañana">Mañana</option>
-                    <option value="Tarde">Tarde</option>
-                    <option value="Noche">Noche</option>
-                  </select>
-                </div>
-
-                <div className="form-group">
                   <label className="form-label" htmlFor="form_estado">Estado Escolar *</label>
                   <select 
                     id="form_estado"
@@ -1047,6 +1031,25 @@ export default function StudentModule({ user }) {
                       <option value="No aplica">No aplica</option>
                     </select>
                   </div>
+
+                  {formValues.ano_ingreso !== "1°" && (
+                    <div className="form-group">
+                      <label className="form-label" htmlFor="form_doc_eq">Equivalencias</label>
+                      <select 
+                        id="form_doc_eq"
+                        className="form-control"
+                        value={formValues.documentos.equivalencias || "Pendiente"}
+                        onChange={(e) => setFormValues(prev => ({ 
+                          ...prev, 
+                          documentos: { ...prev.documentos, equivalencias: e.target.value } 
+                        }))}
+                      >
+                        <option value="Presentado">Presentado</option>
+                        <option value="Pendiente">Pendiente</option>
+                        <option value="No aplica">No aplica</option>
+                      </select>
+                    </div>
+                  )}
                 </div>
               </div>
 
