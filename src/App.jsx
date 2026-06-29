@@ -11,6 +11,7 @@ import NewsModule from "./components/NewsModule";
 import ConfigModule from "./components/ConfigModule";
 import CalendarModule from "./components/CalendarModule";
 import TodoModule from "./components/TodoModule";
+import ScienceFairModule from "./components/ScienceFairModule";
 
 // Import school photographs
 import entranceImg from "./assets/Fotos escuela/IMG_20250219_190308.jpg";
@@ -264,6 +265,14 @@ export default function App() {
               <HelpCircle size={16} />
               <span className="hide-mobile" style={{ marginLeft: "0.25rem" }}>Preguntas Frecuentes</span>
             </button>
+            <button
+              onClick={() => setActivePublicTab("sciencefair")}
+              className={`btn ${activePublicTab === "sciencefair" ? "btn-primary" : "btn-secondary"}`}
+              style={{ padding: "0.5rem 1rem", fontSize: "0.85rem", borderColor: activePublicTab === "sciencefair" ? undefined : "rgba(244,180,26,0.4)", color: activePublicTab === "sciencefair" ? undefined : "var(--color-ocre)" }}
+            >
+              <span style={{ fontSize: "1rem" }}>🔬</span>
+              <span className="hide-mobile" style={{ marginLeft: "0.25rem" }}>Feria de Ciencias</span>
+            </button>
             {user ? (
               <button
                 onClick={() => setViewMode("panel")}
@@ -434,6 +443,7 @@ export default function App() {
             {activePublicTab === "schedules" && <ScheduleModule user={null} isPublic={true} />}
             {activePublicTab === "calendar" && <CalendarModule user={null} />}
             {activePublicTab === "faq" && <FAQPublicView />}
+            {activePublicTab === "sciencefair" && <ScienceFairModule />}
           </div>
 
           {/* Right Sidebar Column - DNI Consulta & Info Escolar */}
